@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 from PIL import Image
 from torch.utils.data import Dataset
@@ -51,7 +52,7 @@ class MaskDataset(Dataset):
         return len(self.df_csv)*7
     
   
-class MaskDataset2(Dataset):
+class MaskDatasetA(Dataset):
     def __init__(self, data_path, train = 'ALL', transform = None):
         self.main_path = data_path
         self.transform = transform
@@ -78,7 +79,7 @@ class MaskDataset2(Dataset):
         image = Image.open(os.path.join(file_path, files[sub_index]))
 
         if self.transform:
-            image = self.transform(image)
+            image = self.transform(image=np.array(image))['image'].float()
 
         y = 0
 
