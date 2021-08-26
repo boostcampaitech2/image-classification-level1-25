@@ -18,6 +18,11 @@ def basic_test_trans():
                         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
                         ])
 
+def A_just_tensor():
+    return A.Compose([
+                        Ap.ToTensorV2()
+                    ])
+
 def A_random_trans():
     return A.Compose([
                         A.CenterCrop(height=384, width=384),
@@ -41,7 +46,14 @@ def A_random_trans():
                         Ap.ToTensorV2()
                     ])
 
-def A_just_tensor():
+def A_simple_trans():
     return A.Compose([
+                        A.CenterCrop(height=384, width=384),
+                        A.OneOf([
+                            A.RandomCrop(height=256, width=256),
+                            A.Resize(height=256, width=256),
+                        ], p=1.0),
+                        A.HorizontalFlip(p=0.5),
+                        A.ShiftScaleRotate(p=0.7),
                         Ap.ToTensorV2()
                     ])
