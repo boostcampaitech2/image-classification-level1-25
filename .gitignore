@@ -3,6 +3,7 @@
 __pycache__/
 etc/
 base_code/
+wandb/
 save/**/2021*
 
 note.ipynb

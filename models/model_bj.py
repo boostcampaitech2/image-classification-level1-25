@@ -31,3 +31,13 @@ class resnetbase2(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.superM(x)
         return x
+
+class resnetbase3(nn.Module) :
+    def __init__(self, numclasses: int = 1000) :
+        super().__init__()
+        self.superM = torchvision.models.resnet18(pretrained=True)
+        self.linear_layers = nn.Linear(1000,numclasses)
+    
+    def  forward(self,x) :
+        x = self.superM(x)
+        return self.linear_layers(x)
