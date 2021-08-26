@@ -17,7 +17,7 @@ class resnetbase(nn.Module):
         x = self.superM(x)
         return x
     
- 
+ # test
 class resnetbase2(nn.Module):
     def __init__(self, num_classes: int = 1000):
         super().__init__()
