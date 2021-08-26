@@ -1,0 +1,178 @@
+2021-08-26 07:05:08,619 INFO    MainThread:23157 [internal.py:wandb_internal():86] W&B internal server running at pid: 23157, started at: 2021-08-26 07:05:08.618680
+2021-08-26 07:05:08,622 DEBUG   SenderThread:23157 [sender.py:send():182] send: header
+2021-08-26 07:05:08,622 INFO    WriterThread:23157 [datastore.py:open_for_write():77] open: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/run-3ujiakue.wandb
+2021-08-26 07:05:08,623 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: check_version
+2021-08-26 07:05:08,623 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: check_version
+2021-08-26 07:05:08,826 DEBUG   SenderThread:23157 [sender.py:send():182] send: run
+2021-08-26 07:05:09,050 INFO    SenderThread:23157 [dir_watcher.py:__init__():168] watching files in: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files
+2021-08-26 07:05:09,051 INFO    SenderThread:23157 [sender.py:_start_run_threads():740] run started: 3ujiakue with start time 1629961507
+2021-08-26 07:05:09,051 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:05:09,051 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: run_start
+2021-08-26 07:05:09,052 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:05:09,056 DEBUG   HandlerThread:23157 [meta.py:__init__():39] meta init
+2021-08-26 07:05:09,056 DEBUG   HandlerThread:23157 [meta.py:__init__():53] meta init done
+2021-08-26 07:05:09,056 DEBUG   HandlerThread:23157 [meta.py:probe():210] probe
+2021-08-26 07:05:09,062 DEBUG   HandlerThread:23157 [meta.py:_setup_git():200] setup git
+2021-08-26 07:05:09,083 DEBUG   HandlerThread:23157 [meta.py:_setup_git():207] setup git done
+2021-08-26 07:05:09,083 DEBUG   HandlerThread:23157 [meta.py:_save_pip():57] save pip
+2021-08-26 07:05:09,083 DEBUG   HandlerThread:23157 [meta.py:_save_pip():71] save pip done
+2021-08-26 07:05:09,083 DEBUG   HandlerThread:23157 [meta.py:_save_conda():78] save conda
+2021-08-26 07:05:10,052 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:05:10,053 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/conda-environment.yaml
+2021-08-26 07:05:10,053 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/requirements.txt
+2021-08-26 07:05:13,427 DEBUG   HandlerThread:23157 [meta.py:_save_conda():86] save conda done
+2021-08-26 07:05:13,427 DEBUG   HandlerThread:23157 [meta.py:probe():252] probe done
+2021-08-26 07:05:13,565 DEBUG   SenderThread:23157 [sender.py:send():182] send: files
+2021-08-26 07:05:13,565 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-metadata.json with policy now
+2021-08-26 07:05:13,570 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:05:13,571 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:05:14,052 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/conda-environment.yaml
+2021-08-26 07:05:14,053 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-metadata.json
+2021-08-26 07:05:14,053 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:05:14,197 INFO    Thread-11 :23157 [upload_job.py:push():137] Uploaded file /tmp/tmpfagpuosvwandb/3peygrm7-wandb-metadata.json
+2021-08-26 07:05:28,752 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:05:28,752 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:05:37,206 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:05:43,942 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:05:43,943 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:05:49,192 DEBUG   SenderThread:23157 [sender.py:send():182] send: history
+2021-08-26 07:05:49,192 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:05:49,194 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:05:50,065 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:05:52,066 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:05:58,802 DEBUG   SenderThread:23157 [sender.py:send():182] send: history
+2021-08-26 07:05:58,802 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:05:58,805 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:05:59,069 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:05:59,131 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:05:59,132 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:06:00,069 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:06:07,358 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:06:14,316 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:06:14,316 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:06:29,495 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:06:29,496 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:06:33,810 DEBUG   SenderThread:23157 [sender.py:send():182] send: history
+2021-08-26 07:06:33,810 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:06:33,811 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:06:34,081 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:06:36,081 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:06:37,494 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:06:43,306 DEBUG   SenderThread:23157 [sender.py:send():182] send: history
+2021-08-26 07:06:43,306 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:06:43,306 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:06:44,084 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:06:44,683 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:06:44,683 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:06:46,085 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:06:59,864 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:06:59,864 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:07:07,635 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:07:15,047 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:07:15,048 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:07:18,794 DEBUG   SenderThread:23157 [sender.py:send():182] send: history
+2021-08-26 07:07:18,795 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:07:18,795 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:07:19,096 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:07:19,398 WARNING MainThread:23157 [internal.py:wandb_internal():145] Internal process interrupt: 1
+2021-08-26 07:07:19,563 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: pause
+2021-08-26 07:07:19,563 INFO    HandlerThread:23157 [handler.py:handle_request_pause():561] stopping system metrics thread
+2021-08-26 07:07:19,594 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:07:20,096 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:07:30,231 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:07:30,232 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:07:32,101 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:07:33,822 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: resume
+2021-08-26 07:07:33,822 INFO    HandlerThread:23157 [handler.py:handle_request_resume():552] starting system metrics thread
+2021-08-26 07:07:33,822 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: pause
+2021-08-26 07:07:33,822 INFO    HandlerThread:23157 [handler.py:handle_request_pause():561] stopping system metrics thread
+2021-08-26 07:07:33,832 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:07:36,050 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: resume
+2021-08-26 07:07:36,050 INFO    HandlerThread:23157 [handler.py:handle_request_resume():552] starting system metrics thread
+2021-08-26 07:07:36,321 DEBUG   SenderThread:23157 [sender.py:send():182] send: telemetry
+2021-08-26 07:07:36,321 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:07:36,322 DEBUG   SenderThread:23157 [sender.py:send():182] send: exit
+2021-08-26 07:07:36,322 INFO    SenderThread:23157 [sender.py:send_exit():291] handling exit code: 0
+2021-08-26 07:07:36,322 INFO    SenderThread:23157 [sender.py:send_exit():293] handling runtime: 130
+2021-08-26 07:07:36,323 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:07:36,323 INFO    SenderThread:23157 [sender.py:send_exit():303] send defer
+2021-08-26 07:07:36,323 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 07:07:36,323 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 07:07:36,323 INFO    HandlerThread:23157 [handler.py:handle_request_defer():145] handle defer: 0
+2021-08-26 07:07:36,324 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: defer
+2021-08-26 07:07:36,324 INFO    SenderThread:23157 [sender.py:send_request_defer():312] handle sender defer: 0
+2021-08-26 07:07:36,324 INFO    SenderThread:23157 [sender.py:transition_state():316] send defer: 1
+2021-08-26 07:07:36,324 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 07:07:36,324 INFO    HandlerThread:23157 [handler.py:handle_request_defer():145] handle defer: 1
+2021-08-26 07:07:36,363 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: defer
+2021-08-26 07:07:36,363 INFO    SenderThread:23157 [sender.py:send_request_defer():312] handle sender defer: 1
+2021-08-26 07:07:36,363 INFO    SenderThread:23157 [sender.py:transition_state():316] send defer: 2
+2021-08-26 07:07:36,363 DEBUG   SenderThread:23157 [sender.py:send():182] send: stats
+2021-08-26 07:07:36,364 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 07:07:36,364 INFO    HandlerThread:23157 [handler.py:handle_request_defer():145] handle defer: 2
+2021-08-26 07:07:36,364 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: defer
+2021-08-26 07:07:36,364 INFO    SenderThread:23157 [sender.py:send_request_defer():312] handle sender defer: 2
+2021-08-26 07:07:36,364 INFO    SenderThread:23157 [sender.py:transition_state():316] send defer: 3
+2021-08-26 07:07:36,365 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 07:07:36,365 INFO    HandlerThread:23157 [handler.py:handle_request_defer():145] handle defer: 3
+2021-08-26 07:07:36,365 DEBUG   SenderThread:23157 [sender.py:send():182] send: summary
+2021-08-26 07:07:36,366 INFO    SenderThread:23157 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:07:36,366 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: defer
+2021-08-26 07:07:36,366 INFO    SenderThread:23157 [sender.py:send_request_defer():312] handle sender defer: 3
+2021-08-26 07:07:36,366 INFO    SenderThread:23157 [sender.py:transition_state():316] send defer: 4
+2021-08-26 07:07:36,366 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 07:07:36,366 INFO    HandlerThread:23157 [handler.py:handle_request_defer():145] handle defer: 4
+2021-08-26 07:07:36,366 DEBUG   SenderThread:23157 [sender.py:send_request():196] send_request: defer
+2021-08-26 07:07:36,366 INFO    SenderThread:23157 [sender.py:send_request_defer():312] handle sender defer: 4
+2021-08-26 07:07:36,428 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:07:36,561 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:07:36,562 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2021-08-26 07:07:37,103 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/wandb-summary.json
+2021-08-26 07:07:37,103 INFO    Thread-8  :23157 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/files/output.log
+2021-08-26 07:07:37,949 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:07:37,949 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2021-08-26 07:07:40,562 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:07:40,562 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2021-08-26 07:07:40,562 ERROR   SenderThread:23157 [retry.py:__call__():126] Retry attempt failed:
+Traceback (most recent call last):
+  File "/opt/conda/lib/python3.8/site-packages/wandb/sdk/lib/retry.py", line 102, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/wandb/sdk/internal/internal_api.py", line 136, in execute
+    six.reraise(*sys.exc_info())
+  File "/opt/conda/lib/python3.8/site-packages/six.py", line 703, in reraise
+    raise value
+  File "/opt/conda/lib/python3.8/site-packages/wandb/sdk/internal/internal_api.py", line 130, in execute
+    return self.client.execute(*args, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/gql/transport/requests.py", line 39, in execute
+    request.raise_for_status()
+  File "/opt/conda/lib/python3.8/site-packages/requests/models.py", line 941, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: https://api.wandb.ai/graphql
+2021-08-26 07:07:41,530 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:07:45,274 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:07:45,275 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2021-08-26 07:07:46,630 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:07:51,731 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:07:55,157 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:07:55,158 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2021-08-26 07:07:56,832 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:01,934 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:07,035 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:12,135 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:13,636 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:08:13,636 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2021-08-26 07:08:17,237 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:22,339 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:27,440 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:32,542 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:37,642 DEBUG   HandlerThread:23157 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 07:08:38,943 WARNING MainThread:23157 [internal.py:wandb_internal():145] Internal process interrupt: 2
+2021-08-26 07:08:38,943 ERROR   MainThread:23157 [internal.py:wandb_internal():148] Internal process interrupted.
+2021-08-26 07:08:39,375 INFO    WriterThread:23157 [datastore.py:close():281] close: /opt/ml/image-classification-level1-25/wandb/run-20210826_070503-3ujiakue/run-3ujiakue.wandb
+2021-08-26 07:08:39,645 INFO    HandlerThread:23157 [handler.py:finish():677] shutting down handler
+2021-08-26 07:08:47,581 ERROR   SenderThread:23157 [internal_api.py:execute():133] 409 response executing GraphQL.
+2021-08-26 07:08:47,581 ERROR   SenderThread:23157 [internal_api.py:execute():134] {"errors":[{"message":"Error 1062: Duplicate entry '420719-3ujiakue' for key 'PRIMARY'","path":["upsertBucket"]}],"data":{"upsertBucket":null}}

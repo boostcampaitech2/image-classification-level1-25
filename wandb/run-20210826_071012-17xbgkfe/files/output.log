@@ -1,0 +1,38 @@
+################################################################################
+  [Comment]
+################################################################################
+Model         : resnetbase3
+  load_state  :
+Dataset       : MaskDatasetA
+  train_len         15120
+  test_len           3780
+Train_trans   : A_simple_trans
+Test_trans    : A_just_tensor
+Start_Date    : 20210826_161022
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 20
+SAVE_INTERVAL : 3
+[TRAIN] Epoch 000 // (avg) Loss : 1.834, Accuracy : 0.466, F1 : 0.249
+[TEST ] Epoch 000 // (avg) Loss : 5.985, Accuracy : 0.119, F1 : 0.157
+[TRAIN] Epoch 001 // (avg) Loss : 1.596, Accuracy : 0.473, F1 : 0.266
+[TEST ] Epoch 001 // (avg) Loss : 5.066, Accuracy : 0.093, F1 : 0.195
+[TRAIN] Epoch 002 // (avg) Loss : 1.567, Accuracy : 0.463, F1 : 0.269
+[TEST ] Epoch 002 // (avg) Loss : 70.182, Accuracy : 0.075, F1 : 0.148
+[TRAIN] Epoch 003 // (avg) Loss : 1.527, Accuracy : 0.480, F1 : 0.272
+[TEST ] Epoch 003 // (avg) Loss : 3.051, Accuracy : 0.305, F1 : 0.040
+[TRAIN] Epoch 004 // (avg) Loss : 1.528, Accuracy : 0.470, F1 : 0.268
+[TEST ] Epoch 004 // (avg) Loss : 16.975, Accuracy : 0.256, F1 : 0.088
+[TRAIN] Epoch 005 // (avg) Loss : 1.514, Accuracy : 0.465, F1 : 0.270
+[TEST ] Epoch 005 // (avg) Loss : 5.472, Accuracy : 0.298, F1 : 0.059
+[TRAIN] Epoch 006 // (avg) Loss : 1.534, Accuracy : 0.470, F1 : 0.270
+[TEST ] Epoch 006 // (avg) Loss : 6.282, Accuracy : 0.355, F1 : 0.043
+[TRAIN] Epoch 007 // (avg) Loss : 1.538, Accuracy : 0.444, F1 : 0.270
+[TEST ] Epoch 007 // (avg) Loss : 2.059, Accuracy : 0.359, F1 : 0.021
+[TRAIN] Epoch 008 // (avg) Loss : 1.538, Accuracy : 0.433, F1 : 0.269
+[TEST ] Epoch 008 // (avg) Loss : 2.992, Accuracy : 0.348, F1 : 0.052
+[TRAIN] Epoch 009 // (avg) Loss : 1.527, Accuracy : 0.429, F1 : 0.271
+[TEST ] Epoch 009 // (avg) Loss : 5.385, Accuracy : 0.344, F1 : 0.104
+[TRAIN] Epoch 010 // (avg) Loss : 1.529, Accuracy : 0.441, F1 : 0.271

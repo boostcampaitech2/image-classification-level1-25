@@ -1,0 +1,31 @@
+2021-08-26 07:08:49,633 INFO    MainThread:23786 [internal.py:wandb_internal():86] W&B internal server running at pid: 23786, started at: 2021-08-26 07:08:49.632703
+2021-08-26 07:08:49,636 DEBUG   SenderThread:23786 [sender.py:send():182] send: header
+2021-08-26 07:08:49,636 INFO    WriterThread:23786 [datastore.py:open_for_write():77] open: /opt/ml/image-classification-level1-25/wandb/run-20210826_070844-hmxygc6o/run-hmxygc6o.wandb
+2021-08-26 07:08:49,637 DEBUG   HandlerThread:23786 [handler.py:handle_request():128] handle_request: check_version
+2021-08-26 07:08:49,637 DEBUG   SenderThread:23786 [sender.py:send_request():196] send_request: check_version
+2021-08-26 07:08:50,195 DEBUG   SenderThread:23786 [sender.py:send():182] send: run
+2021-08-26 07:08:50,422 INFO    SenderThread:23786 [dir_watcher.py:__init__():168] watching files in: /opt/ml/image-classification-level1-25/wandb/run-20210826_070844-hmxygc6o/files
+2021-08-26 07:08:50,422 INFO    SenderThread:23786 [sender.py:_start_run_threads():740] run started: hmxygc6o with start time 1629961729
+2021-08-26 07:08:50,422 DEBUG   SenderThread:23786 [sender.py:send():182] send: summary
+2021-08-26 07:08:50,422 INFO    SenderThread:23786 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 07:08:50,423 DEBUG   HandlerThread:23786 [handler.py:handle_request():128] handle_request: run_start
+2021-08-26 07:08:50,426 DEBUG   HandlerThread:23786 [meta.py:__init__():39] meta init
+2021-08-26 07:08:50,426 DEBUG   HandlerThread:23786 [meta.py:__init__():53] meta init done
+2021-08-26 07:08:50,427 DEBUG   HandlerThread:23786 [meta.py:probe():210] probe
+2021-08-26 07:08:50,433 DEBUG   HandlerThread:23786 [meta.py:_setup_git():200] setup git
+2021-08-26 07:08:50,449 DEBUG   HandlerThread:23786 [meta.py:_setup_git():207] setup git done
+2021-08-26 07:08:50,450 DEBUG   HandlerThread:23786 [meta.py:_save_pip():57] save pip
+2021-08-26 07:08:50,450 DEBUG   HandlerThread:23786 [meta.py:_save_pip():71] save pip done
+2021-08-26 07:08:50,450 DEBUG   HandlerThread:23786 [meta.py:_save_conda():78] save conda
+2021-08-26 07:08:51,424 INFO    Thread-8  :23786 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070844-hmxygc6o/files/requirements.txt
+2021-08-26 07:08:51,424 INFO    Thread-8  :23786 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070844-hmxygc6o/files/conda-environment.yaml
+2021-08-26 07:08:51,424 INFO    Thread-8  :23786 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_070844-hmxygc6o/files/wandb-summary.json
+2021-08-26 07:08:54,683 DEBUG   HandlerThread:23786 [meta.py:_save_conda():86] save conda done
+2021-08-26 07:08:54,684 DEBUG   HandlerThread:23786 [meta.py:probe():252] probe done
+2021-08-26 07:08:54,812 DEBUG   SenderThread:23786 [sender.py:send():182] send: files
+2021-08-26 07:08:54,812 INFO    SenderThread:23786 [sender.py:_save_file():873] saving file wandb-metadata.json with policy now
+2021-08-26 07:08:54,817 DEBUG   HandlerThread:23786 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 07:08:54,818 DEBUG   SenderThread:23786 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 07:08:54,821 DEBUG   HandlerThread:23786 [handler.py:handle_request():128] handle_request: pause
+2021-08-26 07:08:54,822 INFO    HandlerThread:23786 [handler.py:handle_request_pause():561] stopping system metrics thread
+2021-08-26 07:08:55,006 DEBUG   SenderThread:23786 [sender.py:send():182] send: stats
