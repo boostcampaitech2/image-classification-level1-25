@@ -3,11 +3,14 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-class resnetbase2(nn.Module):
-    def __init__(self, num_classes: int = 18):
+
+
+class resnet101e(nn.Module):
+    def __init__(self):
         super().__init__()
-        self.res = timm.create_model(model_name = "resnest101e", num_classes = num_classes, pretrained = True)
+        self.res_model = timm.create_model(model_name = "resnest101e", num_classes = 18, pretrained = True)
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.res(x)
+        x = self.res_model(x)
         return x
+
