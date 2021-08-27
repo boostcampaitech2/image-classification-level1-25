@@ -19,7 +19,7 @@ def basic_test_trans():
                         ])
 
 def A_test_trans():
-    return transforms.Compose([
+    return A.Compose([
                         Ap.ToTensorV2(),
                         A.Normalize(mean=0.5, std=0.2, max_pixel_value=255.0, p=1.0),
                         ])
@@ -29,6 +29,23 @@ def A_just_tensor():
                         Ap.ToTensorV2()
                     ])
 
+def A_resize_trans():
+    return A.Compose([
+                        A.CenterCrop(height=384, width=384),
+                        A.Resize(height=256, width=256),
+                        A.Normalize(),
+                        Ap.ToTensorV2(),
+                    ])
+
+
+def A_centercrop_trans():
+    return A.Compose([
+                        A.CenterCrop(height=300, width=300),
+                        A.Resize(height=256, width=256),
+                        A.Normalize(),
+                        Ap.ToTensorV2(),
+                    ])
+                    
 def A_random_trans():
     return A.Compose([
                         A.CenterCrop(height=384, width=384),
