@@ -1,0 +1,29 @@
+################################################################################
+  [Comment]
+
+################################################################################
+
+
+
+Model         : resnetbase
+  load_state  : /opt/ml/image-classification-level1-25/save/last_single/20210826_231731_resnetbase_finish_002.pt
+Dataset       : basicDatasetA
+  train_len         17010
+  test_len           1890
+Train_trans   : A_simple_trans
+Test_trans    : A_centercrop_trans
+Start_Date    : 20210827_003712
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 2
+SAVE_INTERVAL : 99
+
+
+
+test inference is done!
+
+--------------------------------------------------------------------------------
+
+Finish_Date    : 20210827_003936

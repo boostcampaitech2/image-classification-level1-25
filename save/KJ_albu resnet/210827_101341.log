@@ -1,0 +1,30 @@
+################################################################################
+  [Comment]
+검증용
+################################################################################
+
+
+
+Model         : resnetbase
+  load_state  : /opt/ml/image-classification-level1-25/save/20210827_011533_resnetbase_epoch_040.pt
+Dataset       : basicDatasetA
+  train_len         17010
+  test_len           1890
+Train_trans   : A_random_trans
+Test_trans    : A_centercrop_trans
+Start_Date    : 20210827_101341
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 10
+SAVE_INTERVAL : 99
+
+
+
+[TEST ] Epoch 000 // (avg) Loss : 0.173, Accuracy : 0.946, F1 : 0.90471
+test inference is done!
+
+--------------------------------------------------------------------------------
+
+Finish_Date    : 20210827_101734
