@@ -1,0 +1,40 @@
+################################################################################
+  [Comment]
+
+################################################################################
+
+
+
+Model         : resnetbase
+  load_state  : /opt/ml/image-classification-level1-25/save/20210826_220740_resnetbase_epoch_021.pt
+Dataset       : basicDatasetA
+  train_len         17010
+  test_len           1890
+Train_trans   : A_simple_trans
+Test_trans    : A_resize_trans
+Start_Date    : 20210826_231731
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 2
+SAVE_INTERVAL : 99
+
+
+
+[TRAIN] Epoch 000 // (avg) Loss : 0.360, Accuracy : 0.876, F1 : 0.290
+[TEST ] Epoch 000 // (avg) Loss : 0.184, Accuracy : 0.942, F1 : 0.296
+[TRAIN] Epoch 001 // (avg) Loss : 0.292, Accuracy : 0.896, F1 : 0.290
+[TEST ] Epoch 001 // (avg) Loss : 0.199, Accuracy : 0.938, F1 : 0.296
+
+
+
+################################################################################
+:::학습종료:::
+최고 accuracy : 0.9417989253997803, 최저 loss : 0.1844247192977164, 최고 F1 : 0.2957407832145691
+################################################################################
+test inference is done!
+
+--------------------------------------------------------------------------------
+
+Finish_Date    : 20210826_232234
