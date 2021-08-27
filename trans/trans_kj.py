@@ -82,3 +82,23 @@ def A_simple_trans():
                         A.Normalize(),
                         Ap.ToTensorV2(),
                     ])
+
+
+def A_random_trans_no_cut():
+    return A.Compose([
+                        A.HorizontalFlip(p=0.5),
+                        A.ShiftScaleRotate(p=0.7),
+                        A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
+                        A.GaussNoise(var_limit=(400, 600), p=0.1),
+                        A.OneOf([
+                            A.GridDropout(),
+                            A.GlassBlur(),
+                            A.GaussianBlur(),
+                            A.ColorJitter(),
+                            A.Equalize(),
+                            A.ChannelDropout(),
+                            A.ChannelShuffle(),
+                        ], p=0.2),
+                        A.Normalize(),
+                        Ap.ToTensorV2(),
+                    ])
