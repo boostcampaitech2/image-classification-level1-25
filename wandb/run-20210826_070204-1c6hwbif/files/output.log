@@ -1,0 +1,17 @@
+################################################################################
+  [Comment]
+################################################################################
+Model         : resnetbase3
+  load_state  :
+Dataset       : MaskDatasetA
+  train_len         15120
+  test_len           3780
+Train_trans   : A_simple_trans
+Test_trans    : A_just_tensor
+Start_Date    : 20210826_160228
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 20
+SAVE_INTERVAL : 3

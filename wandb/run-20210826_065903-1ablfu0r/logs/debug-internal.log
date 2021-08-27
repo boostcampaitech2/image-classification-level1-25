@@ -1,0 +1,32 @@
+2021-08-26 06:59:08,705 INFO    MainThread:21654 [internal.py:wandb_internal():86] W&B internal server running at pid: 21654, started at: 2021-08-26 06:59:08.705606
+2021-08-26 06:59:08,709 DEBUG   HandlerThread:21654 [handler.py:handle_request():128] handle_request: check_version
+2021-08-26 06:59:08,709 INFO    WriterThread:21654 [datastore.py:open_for_write():77] open: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/run-1ablfu0r.wandb
+2021-08-26 06:59:08,711 DEBUG   SenderThread:21654 [sender.py:send():182] send: header
+2021-08-26 06:59:08,711 DEBUG   SenderThread:21654 [sender.py:send_request():196] send_request: check_version
+2021-08-26 06:59:09,301 DEBUG   SenderThread:21654 [sender.py:send():182] send: run
+2021-08-26 06:59:09,521 DEBUG   HandlerThread:21654 [handler.py:handle_request():128] handle_request: run_start
+2021-08-26 06:59:09,523 INFO    SenderThread:21654 [dir_watcher.py:__init__():168] watching files in: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files
+2021-08-26 06:59:09,523 INFO    SenderThread:21654 [sender.py:_start_run_threads():740] run started: 1ablfu0r with start time 1629961148
+2021-08-26 06:59:09,523 DEBUG   SenderThread:21654 [sender.py:send():182] send: summary
+2021-08-26 06:59:09,523 INFO    SenderThread:21654 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 06:59:09,526 DEBUG   HandlerThread:21654 [meta.py:__init__():39] meta init
+2021-08-26 06:59:09,527 DEBUG   HandlerThread:21654 [meta.py:__init__():53] meta init done
+2021-08-26 06:59:09,527 DEBUG   HandlerThread:21654 [meta.py:probe():210] probe
+2021-08-26 06:59:09,534 DEBUG   HandlerThread:21654 [meta.py:_setup_git():200] setup git
+2021-08-26 06:59:09,548 DEBUG   HandlerThread:21654 [meta.py:_setup_git():207] setup git done
+2021-08-26 06:59:09,549 DEBUG   HandlerThread:21654 [meta.py:_save_pip():57] save pip
+2021-08-26 06:59:09,551 DEBUG   HandlerThread:21654 [meta.py:_save_pip():71] save pip done
+2021-08-26 06:59:09,551 DEBUG   HandlerThread:21654 [meta.py:_save_conda():78] save conda
+2021-08-26 06:59:10,525 INFO    Thread-8  :21654 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files/requirements.txt
+2021-08-26 06:59:10,525 INFO    Thread-8  :21654 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files/wandb-summary.json
+2021-08-26 06:59:10,525 INFO    Thread-8  :21654 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files/conda-environment.yaml
+2021-08-26 06:59:13,948 DEBUG   HandlerThread:21654 [meta.py:_save_conda():86] save conda done
+2021-08-26 06:59:13,948 DEBUG   HandlerThread:21654 [meta.py:probe():252] probe done
+2021-08-26 06:59:14,085 DEBUG   SenderThread:21654 [sender.py:send():182] send: files
+2021-08-26 06:59:14,086 INFO    SenderThread:21654 [sender.py:_save_file():873] saving file wandb-metadata.json with policy now
+2021-08-26 06:59:14,094 DEBUG   HandlerThread:21654 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 06:59:14,095 DEBUG   SenderThread:21654 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 06:59:14,525 INFO    Thread-8  :21654 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files/conda-environment.yaml
+2021-08-26 06:59:14,525 INFO    Thread-8  :21654 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files/output.log
+2021-08-26 06:59:14,525 INFO    Thread-8  :21654 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_065903-1ablfu0r/files/wandb-metadata.json
+2021-08-26 06:59:14,686 INFO    Thread-11 :21654 [upload_job.py:push():137] Uploaded file /tmp/tmpgx2bp0_0wandb/3ttvkuej-wandb-metadata.json

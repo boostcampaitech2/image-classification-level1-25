@@ -1,0 +1,148 @@
+2021-08-26 06:41:15,325 INFO    MainThread:17547 [internal.py:wandb_internal():86] W&B internal server running at pid: 17547, started at: 2021-08-26 06:41:15.323996
+2021-08-26 06:41:15,330 DEBUG   SenderThread:17547 [sender.py:send():182] send: header
+2021-08-26 06:41:15,331 INFO    WriterThread:17547 [datastore.py:open_for_write():77] open: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/run-3am5kidr.wandb
+2021-08-26 06:41:15,331 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: check_version
+2021-08-26 06:41:15,331 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: check_version
+2021-08-26 06:41:15,509 DEBUG   SenderThread:17547 [sender.py:send():182] send: run
+2021-08-26 06:41:15,725 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: run_start
+2021-08-26 06:41:15,731 DEBUG   HandlerThread:17547 [meta.py:__init__():39] meta init
+2021-08-26 06:41:15,731 DEBUG   HandlerThread:17547 [meta.py:__init__():53] meta init done
+2021-08-26 06:41:15,731 DEBUG   HandlerThread:17547 [meta.py:probe():210] probe
+2021-08-26 06:41:15,731 INFO    SenderThread:17547 [dir_watcher.py:__init__():168] watching files in: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files
+2021-08-26 06:41:15,732 INFO    SenderThread:17547 [sender.py:_start_run_threads():740] run started: 3am5kidr with start time 1629960074
+2021-08-26 06:41:15,732 DEBUG   SenderThread:17547 [sender.py:send():182] send: summary
+2021-08-26 06:41:15,732 INFO    SenderThread:17547 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 06:41:15,737 DEBUG   HandlerThread:17547 [meta.py:_setup_git():200] setup git
+2021-08-26 06:41:15,754 DEBUG   HandlerThread:17547 [meta.py:_setup_git():207] setup git done
+2021-08-26 06:41:15,754 DEBUG   HandlerThread:17547 [meta.py:_save_pip():57] save pip
+2021-08-26 06:41:15,754 DEBUG   HandlerThread:17547 [meta.py:_save_pip():71] save pip done
+2021-08-26 06:41:15,754 DEBUG   HandlerThread:17547 [meta.py:_save_conda():78] save conda
+2021-08-26 06:41:16,733 INFO    Thread-8  :17547 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/requirements.txt
+2021-08-26 06:41:16,734 INFO    Thread-8  :17547 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/wandb-summary.json
+2021-08-26 06:41:16,734 INFO    Thread-8  :17547 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/conda-environment.yaml
+2021-08-26 06:41:20,127 DEBUG   HandlerThread:17547 [meta.py:_save_conda():86] save conda done
+2021-08-26 06:41:20,127 DEBUG   HandlerThread:17547 [meta.py:probe():252] probe done
+2021-08-26 06:41:20,264 DEBUG   SenderThread:17547 [sender.py:send():182] send: files
+2021-08-26 06:41:20,265 INFO    SenderThread:17547 [sender.py:_save_file():873] saving file wandb-metadata.json with policy now
+2021-08-26 06:41:20,274 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: stop_status
+2021-08-26 06:41:20,275 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: stop_status
+2021-08-26 06:41:20,281 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: pause
+2021-08-26 06:41:20,281 INFO    HandlerThread:17547 [handler.py:handle_request_pause():561] stopping system metrics thread
+2021-08-26 06:41:20,461 DEBUG   SenderThread:17547 [sender.py:send():182] send: stats
+2021-08-26 06:41:20,733 INFO    Thread-8  :17547 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/conda-environment.yaml
+2021-08-26 06:41:20,734 INFO    Thread-8  :17547 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/wandb-metadata.json
+2021-08-26 06:41:20,734 INFO    Thread-8  :17547 [dir_watcher.py:_on_file_created():216] file/dir created: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/output.log
+2021-08-26 06:41:20,897 INFO    Thread-11 :17547 [upload_job.py:push():137] Uploaded file /tmp/tmp18rk2rzewandb/13bxxa20-wandb-metadata.json
+2021-08-26 06:41:24,905 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: resume
+2021-08-26 06:41:24,905 INFO    HandlerThread:17547 [handler.py:handle_request_resume():552] starting system metrics thread
+2021-08-26 06:41:25,288 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:25,288 DEBUG   SenderThread:17547 [sender.py:send():182] send: telemetry
+2021-08-26 06:41:25,288 DEBUG   SenderThread:17547 [sender.py:send():182] send: exit
+2021-08-26 06:41:25,288 INFO    SenderThread:17547 [sender.py:send_exit():291] handling exit code: 0
+2021-08-26 06:41:25,289 INFO    SenderThread:17547 [sender.py:send_exit():293] handling runtime: 5
+2021-08-26 06:41:25,291 INFO    SenderThread:17547 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 06:41:25,291 INFO    SenderThread:17547 [sender.py:send_exit():303] send defer
+2021-08-26 06:41:25,291 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:25,292 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,292 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 0
+2021-08-26 06:41:25,292 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,292 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 0
+2021-08-26 06:41:25,292 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 1
+2021-08-26 06:41:25,292 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,293 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 1
+2021-08-26 06:41:25,317 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,318 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 1
+2021-08-26 06:41:25,318 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 2
+2021-08-26 06:41:25,318 DEBUG   SenderThread:17547 [sender.py:send():182] send: stats
+2021-08-26 06:41:25,318 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,318 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 2
+2021-08-26 06:41:25,319 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,319 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 2
+2021-08-26 06:41:25,319 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 3
+2021-08-26 06:41:25,319 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,319 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 3
+2021-08-26 06:41:25,319 DEBUG   SenderThread:17547 [sender.py:send():182] send: summary
+2021-08-26 06:41:25,320 INFO    SenderThread:17547 [sender.py:_save_file():873] saving file wandb-summary.json with policy end
+2021-08-26 06:41:25,320 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,320 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 3
+2021-08-26 06:41:25,320 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 4
+2021-08-26 06:41:25,320 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,320 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 4
+2021-08-26 06:41:25,320 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,320 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 4
+2021-08-26 06:41:25,397 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:25,528 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 5
+2021-08-26 06:41:25,529 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:25,529 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,530 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 5
+2021-08-26 06:41:25,531 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,531 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 5
+2021-08-26 06:41:25,532 INFO    SenderThread:17547 [dir_watcher.py:finish():282] shutting down directory watcher
+2021-08-26 06:41:25,631 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:25,736 INFO    SenderThread:17547 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/config.yaml
+2021-08-26 06:41:25,736 INFO    SenderThread:17547 [dir_watcher.py:_on_file_modified():229] file/dir modified: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/wandb-summary.json
+2021-08-26 06:41:25,737 INFO    SenderThread:17547 [dir_watcher.py:finish():312] scan: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files
+2021-08-26 06:41:25,737 INFO    SenderThread:17547 [dir_watcher.py:finish():318] scan save: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/conda-environment.yaml conda-environment.yaml
+2021-08-26 06:41:25,737 INFO    SenderThread:17547 [dir_watcher.py:finish():318] scan save: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/output.log output.log
+2021-08-26 06:41:25,741 INFO    SenderThread:17547 [dir_watcher.py:finish():318] scan save: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/wandb-metadata.json wandb-metadata.json
+2021-08-26 06:41:25,741 INFO    SenderThread:17547 [dir_watcher.py:finish():318] scan save: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/requirements.txt requirements.txt
+2021-08-26 06:41:25,741 INFO    SenderThread:17547 [dir_watcher.py:finish():318] scan save: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/config.yaml config.yaml
+2021-08-26 06:41:25,745 INFO    SenderThread:17547 [dir_watcher.py:finish():318] scan save: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/wandb-summary.json wandb-summary.json
+2021-08-26 06:41:25,749 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 6
+2021-08-26 06:41:25,750 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:25,755 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:25,756 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 6
+2021-08-26 06:41:25,756 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:25,756 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 6
+2021-08-26 06:41:25,756 INFO    SenderThread:17547 [file_pusher.py:finish():177] shutting down file pusher
+2021-08-26 06:41:25,856 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:25,856 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:25,959 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:25,960 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,062 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,062 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,166 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,166 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,269 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,270 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,356 INFO    Thread-13 :17547 [upload_job.py:push():137] Uploaded file /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/conda-environment.yaml
+2021-08-26 06:41:26,359 INFO    Thread-14 :17547 [upload_job.py:push():137] Uploaded file /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/requirements.txt
+2021-08-26 06:41:26,372 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,372 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,376 INFO    Thread-16 :17547 [upload_job.py:push():137] Uploaded file /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/wandb-summary.json
+2021-08-26 06:41:26,389 INFO    Thread-15 :17547 [upload_job.py:push():137] Uploaded file /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/files/config.yaml
+2021-08-26 06:41:26,474 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,474 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,576 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,576 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,590 INFO    Thread-7  :17547 [sender.py:transition_state():316] send defer: 7
+2021-08-26 06:41:26,591 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:26,591 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 7
+2021-08-26 06:41:26,591 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:26,591 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 7
+2021-08-26 06:41:26,678 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:26,984 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 8
+2021-08-26 06:41:26,984 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:26,986 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:26,986 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 8
+2021-08-26 06:41:26,986 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:26,986 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 8
+2021-08-26 06:41:26,986 INFO    SenderThread:17547 [sender.py:transition_state():316] send defer: 9
+2021-08-26 06:41:26,987 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: defer
+2021-08-26 06:41:26,987 INFO    HandlerThread:17547 [handler.py:handle_request_defer():145] handle defer: 9
+2021-08-26 06:41:26,987 DEBUG   SenderThread:17547 [sender.py:send():182] send: final
+2021-08-26 06:41:26,987 DEBUG   SenderThread:17547 [sender.py:send():182] send: footer
+2021-08-26 06:41:26,987 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: defer
+2021-08-26 06:41:26,987 INFO    SenderThread:17547 [sender.py:send_request_defer():312] handle sender defer: 9
+2021-08-26 06:41:27,086 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: poll_exit
+2021-08-26 06:41:27,087 DEBUG   SenderThread:17547 [sender.py:send_request():196] send_request: poll_exit
+2021-08-26 06:41:27,087 INFO    SenderThread:17547 [file_pusher.py:join():182] waiting for file pusher
+2021-08-26 06:41:27,088 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: get_summary
+2021-08-26 06:41:27,089 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: sampled_history
+2021-08-26 06:41:27,090 DEBUG   HandlerThread:17547 [handler.py:handle_request():128] handle_request: shutdown
+2021-08-26 06:41:27,090 INFO    HandlerThread:17547 [handler.py:finish():677] shutting down handler
+2021-08-26 06:41:27,987 INFO    WriterThread:17547 [datastore.py:close():281] close: /opt/ml/image-classification-level1-25/wandb/run-20210826_064114-3am5kidr/run-3am5kidr.wandb
+2021-08-26 06:41:28,087 INFO    SenderThread:17547 [sender.py:finish():979] shutting down sender
+2021-08-26 06:41:28,087 INFO    SenderThread:17547 [file_pusher.py:finish():177] shutting down file pusher
+2021-08-26 06:41:28,087 INFO    SenderThread:17547 [file_pusher.py:join():182] waiting for file pusher
+2021-08-26 06:41:28,089 INFO    MainThread:17547 [internal.py:handle_exit():76] Internal process exited

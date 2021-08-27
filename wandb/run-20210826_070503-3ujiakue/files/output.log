@@ -1,0 +1,9 @@
+
+[TRAIN] Epoch 000 // (avg) Loss : 1.745, Accuracy : 0.485, F1 : 0.266
+[TEST ] Epoch 000 // (avg) Loss : 3.087, Accuracy : 0.076, F1 : 0.147
+[TRAIN] Epoch 001 // (avg) Loss : 1.473, Accuracy : 0.508, F1 : 0.273
+[TEST ] Epoch 001 // (avg) Loss : 2.435, Accuracy : 0.435, F1 : 0.223
+[TRAIN] Epoch 002 // (avg) Loss : 1.423, Accuracy : 0.538, F1 : 0.275
+wandb: ERROR Dropped streaming file chunk (see wandb/debug-internal.log)
+ERROR:root:dropped chunk 404 Client Error: Not Found for url: https://api.wandb.ai/files/presto105/lv1_p/3ujiakue/file_stream
+NoneType: None
