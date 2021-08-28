@@ -4,6 +4,7 @@ __pycache__/
 etc/
 base_code/
 save/**/2021*
+mission/
 
 note.ipynb
 my_trainer.ipynb
