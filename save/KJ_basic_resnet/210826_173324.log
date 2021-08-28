@@ -1,0 +1,29 @@
+################################################################################
+  [Comment]
+그냥 잘나왔던거 테스트
+################################################################################
+
+
+
+Model         : resnetbase
+  load_state  : /opt/ml/image-classification-level1-25/save/20210826_145028_resnetbase_epoch_039.pt
+Dataset       : MaskDataset
+  train_len         15120
+  test_len           3780
+Train_trans   : basic_train_trans
+Test_trans    : basic_test_trans
+Start_Date    : 20210826_173324
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 50
+SAVE_INTERVAL : 3
+
+
+
+test inference is done!
+
+--------------------------------------------------------------------------------
+
+Finish_Date    : 20210826_173601
