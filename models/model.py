@@ -115,3 +115,4 @@ class MultiModelMergeModel(nn.Module):
             MERGED = torch.cat((MASK, AGE, GENDER), dim=1)
         MERGED = self.classifier(nn.functional.relu(MERGED))
         return MERGED
+
