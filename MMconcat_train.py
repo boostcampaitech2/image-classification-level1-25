@@ -190,19 +190,22 @@ def train(args):
         print(f'-'*50)
         print(split_list)
 
-        best_val_acc = 0
         best_val_loss = np.inf
+        best_val_acc = 0
+        best_val_f1 = 0
 
-        for epoch in range(args.epochs[idx]):
+        num_epoch = int(args.epochs[idx])
+        for epoch in range(num_epoch):
             # train loop
             model_dict[label_class].train() ## MM model
             loss_value = 0
             matches = 0
-            print(f"Epoch[{epoch}/{args.epochs[idx]}]")
+            print(f"Epoch[{epoch}/{num_epoch}]")
+
             for idx, train_batch in enumerate(pbar := tqdm(train_loader, ncols=100)):
-                inputs, labels = train_batch
+                inputs, labels_dict = train_batch
                 inputs = inputs.to(device)
-                labels = labels[split_list].to(device)  ## MM model
+                labels = labels_dict[split_list].to(device)  ## MM model
 
                 optimizer.zero_grad()
 
@@ -218,10 +221,11 @@ def train(args):
                 if (idx + 1) % args.log_interval == 0:
                     train_loss = loss_value / args.log_interval
                     train_acc = matches / args.batch_size / args.log_interval
+
                     current_lr = get_lr(optimizer)
                     pbar.set_description(f"loss_{train_loss:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
                     # print(
-                    #     f"Epoch[{epoch}/{args.epochs[idx]}]({idx + 1}/{len(train_loader)}) || "
+                    #     f"Epoch[{epoch}/{num_epoch}]({idx + 1}/{len(train_loader)}) || "
                     #     f"training loss {train_loss:4.4} || training accuracy {train_acc:4.2%} || lr {current_lr}"
                     # )
                     logger.add_scalar("Train/loss", train_loss, epoch * len(train_loader) + idx)
@@ -239,10 +243,11 @@ def train(args):
                 val_loss_items = []
                 val_acc_items = []
                 figure = None
+                running_f1 = 0
                 for val_batch in tqdm(val_loader, ncols=100):
-                    inputs, labels = val_batch
+                    inputs, labels_dict = val_batch
                     inputs = inputs.to(device)
-                    labels = labels[split_list].to(device) ## MM model
+                    labels = labels_dict[split_list].to(device) ## MM model
 
                     outs = model_dict[label_class](inputs)   ## MM model
                     preds = torch.argmax(outs, dim=-1)
@@ -251,7 +256,7 @@ def train(args):
                     acc_item = (labels == preds).sum().item()
                     val_loss_items.append(loss_item)
                     val_acc_items.append(acc_item)
-
+                    running_f1 += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
                     # 한번씩 여기서 미친듯이 렉먹는듯
                     # if figure is None:
                     #     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -259,24 +264,32 @@ def train(args):
                     #     figure = grid_image(
                     #         inputs_np, labels, preds, n=16, shuffle=args.validdataset != "MaskSplitByProfileDataset"
                     #     )
+                    
 
                 val_loss = np.sum(val_loss_items) / len(val_loader)
                 val_acc = np.sum(val_acc_items) / len(valid_dataset)
+                val_f1 = running_f1 / len(val_loader)
+
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    
                 if val_acc > best_val_acc:
                 #     print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
                 #     torch.save(model.state_dict(), f"{save_dir}/best.pth")
                     best_val_acc = val_acc
-                if val_loss < best_val_loss:
-                    print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+
+                if val_f1 > best_val_f1 :
+                    print(f"New best model for val f1 score : {val_f1:.4}! saving the best model..")
                     torch.save(model_dict[label_class].state_dict(), f"{save_dir}/{split_list}_best.pth")     ## MM model
-                    best_val_loss = val_loss
+                    best_val_f1 = val_f1
                 torch.save(model_dict[label_class].state_dict(), f"{save_dir}/{split_list}_last.pth")     ## MM model
                 print(
-                    f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
-                    f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
+                    f"[Val] acc : {val_acc:4.2%}, f1 : {val_f1:.4f}, loss: {val_loss:4.2} || "
+                    f"best acc : {best_val_acc:4.2%}, best f1: {best_val_f1:.4f}, best loss: {best_val_loss:4.2}"
                 )
                 logger.add_scalar("Val/loss", val_loss, epoch)
                 logger.add_scalar("Val/accuracy", val_acc, epoch)
+                logger.add_scalar("Val/f1", val_f1, epoch)
                 # logger.add_figure("results", figure, epoch)
                 print()
 
