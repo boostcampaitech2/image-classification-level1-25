@@ -297,7 +297,7 @@ if __name__ == '__main__':
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training (default: [224,224])')
     parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 32)')
     parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 1000)')
-    parser.add_argument('--models', type=list, default=['resnetbase','resnetbase','resnetbase'], help='model type (default: resnetbase, resnetbase, resnetbase)')
+    parser.add_argument('--models', nargs="+", type=str, default=['resnetbase','resnetbase','resnetbase'], help='model type (default: resnetbase, resnetbase, resnetbase)')
     parser.add_argument('--mergedmodel', type=str, default='MultiModelMergeModel', help='model type (default: MultiModelMergeModel)')
     parser.add_argument('--prev_model_frz', type=str, default='True', help='True/False (default: True)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
