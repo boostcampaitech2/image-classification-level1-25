@@ -1,7 +1,10 @@
 
 from albumentations import *
 from albumentations.pytorch import ToTensorV2
-
+from albumentations.augmentations.transforms import Normalize
+from torchvision import transforms
+import albumentations as A
+import albumentations.pytorch as Ap
 
 def get_transforms(need=('train', 'val'), img_size=(512, 384), mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246)):
     transformations = {}
@@ -23,3 +26,11 @@ def get_transforms(need=('train', 'val'), img_size=(512, 384), mean=(0.548, 0.50
             ToTensorV2(p=1.0),
         ], p=1.0)
     return transformations
+
+def A_resize_trans():
+    return A.Compose([
+                        A.CenterCrop(height=384, width=384),
+                        A.Resize(height=256, width=256),
+                        A.Normalize(),
+                        Ap.ToTensorV2(),
+                    ])
