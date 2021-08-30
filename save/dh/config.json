@@ -1,0 +1,30 @@
+{
+    "seed": 25,
+    "epochs": 2,
+    "dataset": "teamDataset",
+    "trainaug": "A_centercrop_trans",
+    "validaug": "A_centercrop_trans",
+    "resize": [
+        224,
+        224
+    ],
+    "batch_size": 32,
+    "valid_batch_size": 32,
+    "model": "rexnet",
+    "optimizer": "SGD",
+    "lr": 0.001,
+    "val_ratio": 0.2,
+    "criterion": "cross_entropy",
+    "lr_decay_step": 20,
+    "log_interval": 20,
+    "name": "dh",
+    "patience": 5,
+    "num_split": 2,
+    "userdataset": "dataset",
+    "usermodel": "model",
+    "usertrans": "trans",
+    "data_dir": "/opt/ml/input/data/train",
+    "eval_dir": "/opt/ml/input/data/eval",
+    "model_dir": "./model",
+    "save_dir": "./save"
+}
