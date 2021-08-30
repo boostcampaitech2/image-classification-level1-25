@@ -10,3 +10,4 @@ wandb/
 note.ipynb
 my_trainer.ipynb
 origin_trainer_bj.ipynb
+origin_trainer_single_test.ipynb
