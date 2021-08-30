@@ -33,3 +33,13 @@ class resnetbase2(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.superM(x)
         return x
+
+
+class cspdarknet53(nn.Module) :
+    def __init__(self, num_classes) :
+        super().__init()
+        self.model = timm.create_model(model_name= "cspdarknet53",
+                                        num_classes = 18, pretrained = True)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.model(x)
+        return x

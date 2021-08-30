@@ -104,6 +104,7 @@ class basicDatasetA(Dataset):
     def __init__(self, data_path, mode = 'ALL', transform = None):
         self.main_path = data_path
         self.transform = transform
+
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
         df_origin['gender'] = df_origin['gender'].map({'male':0, 'female':1})
         df_origin = df_origin.sample(frac=1).reset_index(drop=True)
