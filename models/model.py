@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
+import timm
 
 
 class BaseModel(nn.Module):
@@ -63,6 +64,21 @@ class resnetbase(nn.Module):
         self.superM.fc = torch.nn.Linear(in_features=512, out_features=num_classes, bias=True)
         torch.nn.init.xavier_uniform_(self.superM.fc.weight)
         stdv = 1/np.sqrt(512)
+        self.superM.fc.bias.data.uniform_(-stdv, stdv)
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x
+
+class rexnet200base(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+
+        self.superM = timm.create_model('rexnet_200', pretrained=True)
+    
+        self.superM.fc = torch.nn.Linear(in_features=1000, out_features=num_classes, bias=True)
+        torch.nn.init.xavier_uniform_(self.superM.fc.weight)
+        stdv = 1/np.sqrt(1000)
         self.superM.fc.bias.data.uniform_(-stdv, stdv)
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:

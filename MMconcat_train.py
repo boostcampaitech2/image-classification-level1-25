@@ -149,6 +149,8 @@ def train(args):
     num_classes_dict = train_dataset.num_classes # dictionary types, keys : ['mask', 'gender', 'age', 'concat', 'merged'], values : [3, 2, 3, 8, 18]
     labels_classes = ['mask', 'gender', 'age']
     model_dict = {}
+    optimizer_dict = {}
+    scheduler_dict = {}
     
     # -- model
     ## -- multi model
@@ -157,7 +159,7 @@ def train(args):
         model_dict[label_class] = model_module(
             num_classes=num_classes_dict[label_class]
         ).to(device)
-        model_dict[label_class] = torch.nn.DataParallel(model_dict[label_class])
+        # model_dict[label_class] = torch.nn.DataParallel(model_dict[label_class])
 
     ## -- merged mergedmodel
     model_module = getattr(import_module("models."+args.usermodel), args.mergedmodel)  # default: MultiModelMergeModel
@@ -166,7 +168,7 @@ def train(args):
         concatclasses=num_classes_dict['concat'], num_classes=num_classes_dict['merged'],
         prev_model_frz=args.prev_model_frz
     ).to(device)
-    model_dict['merged'] = torch.nn.DataParallel(model_dict['merged'])
+    # model_dict['merged'] = torch.nn.DataParallel(model_dict['merged'])
     
     labels_classes.append('merged')
 
@@ -174,12 +176,12 @@ def train(args):
     for label_class in labels_classes :
         criterion = create_criterion(args.criterion)  # default: cross_entropy
         opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: Adam
-        optimizer = opt_module(
+        optimizer_dict[label_class] = opt_module(
             filter(lambda p: p.requires_grad, model_dict[label_class].parameters()),
             lr=args.lr,
             weight_decay=5e-4
         )
-        scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+        scheduler_dict[label_class] = StepLR(optimizer_dict[label_class], args.lr_decay_step, gamma=0.5)
 
     # -- logging
     logger = SummaryWriter(log_dir=save_dir)
@@ -207,14 +209,14 @@ def train(args):
                 inputs = inputs.to(device)
                 labels = labels_dict[split_list].to(device)  ## MM model
 
-                optimizer.zero_grad()
+                optimizer_dict[label_class].zero_grad() ## MM model
 
                 outs = model_dict[label_class](inputs)   ## MM model
                 preds = torch.argmax(outs, dim=-1)
                 loss = criterion(outs, labels)
 
                 loss.backward()
-                optimizer.step()
+                optimizer_dict[label_class].step()  ## MM model
 
                 loss_value += loss.item()
                 matches += (preds == labels).sum().item()
@@ -222,7 +224,7 @@ def train(args):
                     train_loss = loss_value / args.log_interval
                     train_acc = matches / args.batch_size / args.log_interval
 
-                    current_lr = get_lr(optimizer)
+                    current_lr = get_lr(optimizer_dict[label_class])
                     pbar.set_description(f"loss_{train_loss:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
                     # print(
                     #     f"Epoch[{epoch}/{num_epoch}]({idx + 1}/{len(train_loader)}) || "
@@ -234,7 +236,7 @@ def train(args):
                     loss_value = 0
                     matches = 0
 
-            scheduler.step()
+            scheduler_dict[label_class].step()
 
             # val loop
             with torch.no_grad():
