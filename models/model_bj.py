@@ -74,3 +74,24 @@ class MergeFreezeModel(nn.Module):
         MERGED = torch.cat((MASK.detach(), AGE.detach(), GENDER.detach()), dim=1)
         MERGED = self.classifier(nn.functional.relu(MERGED))
         return MERGED
+
+class MergeFullModel(nn.Module):
+    def __init__(self, modelMASK, modelAGE, modelGENDER,
+                    concatclasses : int = 8 , numclasses: int = 18):
+        super().__init__()
+        self.modelMASK = modelMASK
+        self.modelAGE = modelAGE
+        self.modelGENDER = modelGENDER
+        self.classifier = nn.Sequential(
+            nn.Linear(concatclasses, 32),
+            nn.ReLU(inplace=True),
+            nn.Linear(32, numclasses),
+        )
+        
+    def forward(self, IMAGE):
+        MASK = self.modelMASK(IMAGE)
+        AGE = self.modelAGE(IMAGE)
+        GENDER = self.modelGENDER(IMAGE)
+        MERGED = torch.cat((MASK, AGE, GENDER), dim=1)
+        MERGED = self.classifier(nn.functional.relu(MERGED))
+        return MERGED
