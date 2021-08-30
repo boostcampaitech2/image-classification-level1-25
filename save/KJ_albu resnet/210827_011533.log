@@ -1,0 +1,236 @@
+################################################################################
+  [Comment]
+밤새 일해라
+################################################################################
+
+
+
+Model         : resnetbase
+  load_state  : 
+Dataset       : basicDatasetA
+  train_len         17010
+  test_len           1890
+Train_trans   : A_random_trans
+Test_trans    : A_centercrop_trans
+Start_Date    : 20210827_011533
+Device        : cuda:0
+CLASS_NUM     : 18
+NUM_WORKERS   : 4
+BATCH_SIZE    : 32
+NUM_EPOCH     : 100
+SAVE_INTERVAL : 2
+
+
+
+[TRAIN] Epoch 000 // (avg) Loss : 1.375, Accuracy : 0.537, F1 : 0.01236
+[TEST ] Epoch 000 // (avg) Loss : 0.537, Accuracy : 0.812, F1 : 0.02184
+[TRAIN] Epoch 001 // (avg) Loss : 0.903, Accuracy : 0.688, F1 : 0.01707
+[TEST ] Epoch 001 // (avg) Loss : 0.534, Accuracy : 0.817, F1 : 0.02114
+[TRAIN] Epoch 002 // (avg) Loss : 0.766, Accuracy : 0.736, F1 : 0.01854
+[TEST ] Epoch 002 // (avg) Loss : 0.534, Accuracy : 0.830, F1 : 0.02285
+[TRAIN] Epoch 003 // (avg) Loss : 0.678, Accuracy : 0.767, F1 : 0.01971
+[TEST ] Epoch 003 // (avg) Loss : 0.402, Accuracy : 0.865, F1 : 0.02464
+[TRAIN] Epoch 004 // (avg) Loss : 0.623, Accuracy : 0.784, F1 : 0.02029
+[TEST ] Epoch 004 // (avg) Loss : 0.328, Accuracy : 0.882, F1 : 0.02571
+[TRAIN] Epoch 005 // (avg) Loss : 0.578, Accuracy : 0.803, F1 : 0.02106
+[TEST ] Epoch 005 // (avg) Loss : 0.351, Accuracy : 0.883, F1 : 0.02502
+[TRAIN] Epoch 006 // (avg) Loss : 0.549, Accuracy : 0.808, F1 : 0.02130
+[TEST ] Epoch 006 // (avg) Loss : 0.383, Accuracy : 0.860, F1 : 0.02441
+[TRAIN] Epoch 007 // (avg) Loss : 0.520, Accuracy : 0.818, F1 : 0.02160
+[TEST ] Epoch 007 // (avg) Loss : 0.392, Accuracy : 0.873, F1 : 0.02479
+[TRAIN] Epoch 008 // (avg) Loss : 0.493, Accuracy : 0.826, F1 : 0.02211
+[TEST ] Epoch 008 // (avg) Loss : 0.294, Accuracy : 0.904, F1 : 0.02643
+[TRAIN] Epoch 009 // (avg) Loss : 0.465, Accuracy : 0.836, F1 : 0.02269
+[TEST ] Epoch 009 // (avg) Loss : 0.317, Accuracy : 0.891, F1 : 0.02548
+[TRAIN] Epoch 010 // (avg) Loss : 0.441, Accuracy : 0.845, F1 : 0.02301
+[TEST ] Epoch 010 // (avg) Loss : 0.324, Accuracy : 0.887, F1 : 0.02530
+[TRAIN] Epoch 011 // (avg) Loss : 0.432, Accuracy : 0.849, F1 : 0.02304
+[TEST ] Epoch 011 // (avg) Loss : 0.313, Accuracy : 0.887, F1 : 0.02570
+[TRAIN] Epoch 012 // (avg) Loss : 0.420, Accuracy : 0.854, F1 : 0.02340
+[TEST ] Epoch 012 // (avg) Loss : 0.285, Accuracy : 0.893, F1 : 0.02610
+[TRAIN] Epoch 013 // (avg) Loss : 0.396, Accuracy : 0.857, F1 : 0.02347
+[TEST ] Epoch 013 // (avg) Loss : 0.214, Accuracy : 0.912, F1 : 0.02669
+[TRAIN] Epoch 014 // (avg) Loss : 0.375, Accuracy : 0.866, F1 : 0.02401
+[TEST ] Epoch 014 // (avg) Loss : 0.330, Accuracy : 0.872, F1 : 0.02489
+[TRAIN] Epoch 015 // (avg) Loss : 0.370, Accuracy : 0.866, F1 : 0.02385
+[TEST ] Epoch 015 // (avg) Loss : 0.293, Accuracy : 0.892, F1 : 0.02537
+[TRAIN] Epoch 016 // (avg) Loss : 0.341, Accuracy : 0.878, F1 : 0.02439
+[TEST ] Epoch 016 // (avg) Loss : 0.253, Accuracy : 0.894, F1 : 0.02556
+[TRAIN] Epoch 017 // (avg) Loss : 0.323, Accuracy : 0.884, F1 : 0.02475
+[TEST ] Epoch 017 // (avg) Loss : 0.227, Accuracy : 0.908, F1 : 0.02667
+[TRAIN] Epoch 018 // (avg) Loss : 0.324, Accuracy : 0.883, F1 : 0.02471
+[TEST ] Epoch 018 // (avg) Loss : 0.217, Accuracy : 0.915, F1 : 0.02689
+[TRAIN] Epoch 019 // (avg) Loss : 0.306, Accuracy : 0.887, F1 : 0.02482
+[TEST ] Epoch 019 // (avg) Loss : 0.233, Accuracy : 0.920, F1 : 0.02728
+[TRAIN] Epoch 020 // (avg) Loss : 0.305, Accuracy : 0.892, F1 : 0.02522
+[TEST ] Epoch 020 // (avg) Loss : 0.201, Accuracy : 0.922, F1 : 0.02721
+[TRAIN] Epoch 021 // (avg) Loss : 0.294, Accuracy : 0.896, F1 : 0.02513
+[TEST ] Epoch 021 // (avg) Loss : 0.259, Accuracy : 0.922, F1 : 0.02745
+[TRAIN] Epoch 022 // (avg) Loss : 0.281, Accuracy : 0.899, F1 : 0.02552
+[TEST ] Epoch 022 // (avg) Loss : 0.257, Accuracy : 0.910, F1 : 0.02653
+[TRAIN] Epoch 023 // (avg) Loss : 0.267, Accuracy : 0.905, F1 : 0.02574
+[TEST ] Epoch 023 // (avg) Loss : 0.194, Accuracy : 0.925, F1 : 0.02750
+[TRAIN] Epoch 024 // (avg) Loss : 0.261, Accuracy : 0.909, F1 : 0.02593
+[TEST ] Epoch 024 // (avg) Loss : 0.214, Accuracy : 0.916, F1 : 0.02722
+[TRAIN] Epoch 025 // (avg) Loss : 0.242, Accuracy : 0.914, F1 : 0.02618
+[TEST ] Epoch 025 // (avg) Loss : 0.176, Accuracy : 0.935, F1 : 0.02808
+[TRAIN] Epoch 026 // (avg) Loss : 0.228, Accuracy : 0.919, F1 : 0.02645
+[TEST ] Epoch 026 // (avg) Loss : 0.166, Accuracy : 0.938, F1 : 0.02810
+[TRAIN] Epoch 027 // (avg) Loss : 0.239, Accuracy : 0.915, F1 : 0.02603
+[TEST ] Epoch 027 // (avg) Loss : 0.154, Accuracy : 0.939, F1 : 0.02786
+[TRAIN] Epoch 028 // (avg) Loss : 0.215, Accuracy : 0.922, F1 : 0.02651
+[TEST ] Epoch 028 // (avg) Loss : 0.159, Accuracy : 0.941, F1 : 0.02807
+[TRAIN] Epoch 029 // (avg) Loss : 0.224, Accuracy : 0.919, F1 : 0.02644
+[TEST ] Epoch 029 // (avg) Loss : 0.147, Accuracy : 0.945, F1 : 0.02852
+[TRAIN] Epoch 030 // (avg) Loss : 0.207, Accuracy : 0.926, F1 : 0.02677
+[TEST ] Epoch 030 // (avg) Loss : 0.188, Accuracy : 0.937, F1 : 0.02798
+[TRAIN] Epoch 031 // (avg) Loss : 0.216, Accuracy : 0.921, F1 : 0.02660
+[TEST ] Epoch 031 // (avg) Loss : 0.144, Accuracy : 0.947, F1 : 0.02834
+[TRAIN] Epoch 032 // (avg) Loss : 0.182, Accuracy : 0.933, F1 : 0.02690
+[TEST ] Epoch 032 // (avg) Loss : 0.157, Accuracy : 0.942, F1 : 0.02826
+[TRAIN] Epoch 033 // (avg) Loss : 0.183, Accuracy : 0.935, F1 : 0.02704
+[TEST ] Epoch 033 // (avg) Loss : 0.161, Accuracy : 0.941, F1 : 0.02828
+[TRAIN] Epoch 034 // (avg) Loss : 0.190, Accuracy : 0.934, F1 : 0.02723
+[TEST ] Epoch 034 // (avg) Loss : 0.134, Accuracy : 0.950, F1 : 0.02867
+[TRAIN] Epoch 035 // (avg) Loss : 0.168, Accuracy : 0.940, F1 : 0.02741
+[TEST ] Epoch 035 // (avg) Loss : 0.181, Accuracy : 0.937, F1 : 0.02809
+[TRAIN] Epoch 036 // (avg) Loss : 0.171, Accuracy : 0.939, F1 : 0.02731
+[TEST ] Epoch 036 // (avg) Loss : 0.145, Accuracy : 0.938, F1 : 0.02812
+[TRAIN] Epoch 037 // (avg) Loss : 0.165, Accuracy : 0.942, F1 : 0.02787
+[TEST ] Epoch 037 // (avg) Loss : 0.122, Accuracy : 0.949, F1 : 0.02857
+[TRAIN] Epoch 038 // (avg) Loss : 0.166, Accuracy : 0.939, F1 : 0.02741
+[TEST ] Epoch 038 // (avg) Loss : 0.131, Accuracy : 0.953, F1 : 0.02903
+[TRAIN] Epoch 039 // (avg) Loss : 0.145, Accuracy : 0.949, F1 : 0.02806
+[TEST ] Epoch 039 // (avg) Loss : 0.166, Accuracy : 0.940, F1 : 0.02842
+[TRAIN] Epoch 040 // (avg) Loss : 0.143, Accuracy : 0.950, F1 : 0.02799
+[TEST ] Epoch 040 // (avg) Loss : 0.211, Accuracy : 0.940, F1 : 0.02847
+[TRAIN] Epoch 041 // (avg) Loss : 0.141, Accuracy : 0.948, F1 : 0.02809
+[TEST ] Epoch 041 // (avg) Loss : 0.158, Accuracy : 0.942, F1 : 0.02802
+[TRAIN] Epoch 042 // (avg) Loss : 0.139, Accuracy : 0.952, F1 : 0.02830
+[TEST ] Epoch 042 // (avg) Loss : 0.165, Accuracy : 0.952, F1 : 0.02862
+[TRAIN] Epoch 043 // (avg) Loss : 0.129, Accuracy : 0.956, F1 : 0.02841
+[TEST ] Epoch 043 // (avg) Loss : 0.230, Accuracy : 0.929, F1 : 0.02794
+[TRAIN] Epoch 044 // (avg) Loss : 0.131, Accuracy : 0.954, F1 : 0.02831
+[TEST ] Epoch 044 // (avg) Loss : 0.190, Accuracy : 0.935, F1 : 0.02819
+[TRAIN] Epoch 045 // (avg) Loss : 0.120, Accuracy : 0.957, F1 : 0.02847
+[TEST ] Epoch 045 // (avg) Loss : 0.235, Accuracy : 0.929, F1 : 0.02779
+[TRAIN] Epoch 046 // (avg) Loss : 0.124, Accuracy : 0.957, F1 : 0.02860
+[TEST ] Epoch 046 // (avg) Loss : 0.211, Accuracy : 0.933, F1 : 0.02742
+[TRAIN] Epoch 047 // (avg) Loss : 0.122, Accuracy : 0.957, F1 : 0.02844
+[TEST ] Epoch 047 // (avg) Loss : 0.160, Accuracy : 0.948, F1 : 0.02855
+[TRAIN] Epoch 048 // (avg) Loss : 0.128, Accuracy : 0.954, F1 : 0.02830
+[TEST ] Epoch 048 // (avg) Loss : 0.146, Accuracy : 0.944, F1 : 0.02873
+[TRAIN] Epoch 049 // (avg) Loss : 0.112, Accuracy : 0.959, F1 : 0.02862
+[TEST ] Epoch 049 // (avg) Loss : 0.182, Accuracy : 0.933, F1 : 0.02826
+[TRAIN] Epoch 050 // (avg) Loss : 0.119, Accuracy : 0.958, F1 : 0.02860
+[TEST ] Epoch 050 // (avg) Loss : 0.209, Accuracy : 0.938, F1 : 0.02796
+[TRAIN] Epoch 051 // (avg) Loss : 0.118, Accuracy : 0.959, F1 : 0.02869
+[TEST ] Epoch 051 // (avg) Loss : 0.178, Accuracy : 0.935, F1 : 0.02803
+[TRAIN] Epoch 052 // (avg) Loss : 0.095, Accuracy : 0.966, F1 : 0.02904
+[TEST ] Epoch 052 // (avg) Loss : 0.157, Accuracy : 0.942, F1 : 0.02837
+[TRAIN] Epoch 053 // (avg) Loss : 0.108, Accuracy : 0.962, F1 : 0.02888
+[TEST ] Epoch 053 // (avg) Loss : 0.184, Accuracy : 0.935, F1 : 0.02836
+[TRAIN] Epoch 054 // (avg) Loss : 0.105, Accuracy : 0.963, F1 : 0.02882
+[TEST ] Epoch 054 // (avg) Loss : 0.221, Accuracy : 0.922, F1 : 0.02777
+[TRAIN] Epoch 055 // (avg) Loss : 0.097, Accuracy : 0.965, F1 : 0.02898
+[TEST ] Epoch 055 // (avg) Loss : 0.186, Accuracy : 0.941, F1 : 0.02827
+[TRAIN] Epoch 056 // (avg) Loss : 0.103, Accuracy : 0.961, F1 : 0.02893
+[TEST ] Epoch 056 // (avg) Loss : 0.165, Accuracy : 0.939, F1 : 0.02834
+[TRAIN] Epoch 057 // (avg) Loss : 0.099, Accuracy : 0.965, F1 : 0.02902
+[TEST ] Epoch 057 // (avg) Loss : 0.169, Accuracy : 0.941, F1 : 0.02865
+[TRAIN] Epoch 058 // (avg) Loss : 0.100, Accuracy : 0.966, F1 : 0.02904
+[TEST ] Epoch 058 // (avg) Loss : 0.216, Accuracy : 0.939, F1 : 0.02831
+[TRAIN] Epoch 059 // (avg) Loss : 0.087, Accuracy : 0.969, F1 : 0.02924
+[TEST ] Epoch 059 // (avg) Loss : 0.186, Accuracy : 0.945, F1 : 0.02860
+[TRAIN] Epoch 060 // (avg) Loss : 0.093, Accuracy : 0.967, F1 : 0.02919
+[TEST ] Epoch 060 // (avg) Loss : 0.197, Accuracy : 0.935, F1 : 0.02804
+[TRAIN] Epoch 061 // (avg) Loss : 0.090, Accuracy : 0.968, F1 : 0.02923
+[TEST ] Epoch 061 // (avg) Loss : 0.223, Accuracy : 0.934, F1 : 0.02788
+[TRAIN] Epoch 062 // (avg) Loss : 0.080, Accuracy : 0.973, F1 : 0.02957
+[TEST ] Epoch 062 // (avg) Loss : 0.143, Accuracy : 0.957, F1 : 0.02871
+[TRAIN] Epoch 063 // (avg) Loss : 0.084, Accuracy : 0.971, F1 : 0.02932
+[TEST ] Epoch 063 // (avg) Loss : 0.220, Accuracy : 0.934, F1 : 0.02777
+[TRAIN] Epoch 064 // (avg) Loss : 0.091, Accuracy : 0.970, F1 : 0.02938
+[TEST ] Epoch 064 // (avg) Loss : 0.200, Accuracy : 0.937, F1 : 0.02818
+[TRAIN] Epoch 065 // (avg) Loss : 0.081, Accuracy : 0.972, F1 : 0.02932
+[TEST ] Epoch 065 // (avg) Loss : 0.247, Accuracy : 0.933, F1 : 0.02794
+[TRAIN] Epoch 066 // (avg) Loss : 0.075, Accuracy : 0.974, F1 : 0.02959
+[TEST ] Epoch 066 // (avg) Loss : 0.156, Accuracy : 0.945, F1 : 0.02893
+[TRAIN] Epoch 067 // (avg) Loss : 0.080, Accuracy : 0.972, F1 : 0.02940
+[TEST ] Epoch 067 // (avg) Loss : 0.206, Accuracy : 0.935, F1 : 0.02806
+[TRAIN] Epoch 068 // (avg) Loss : 0.075, Accuracy : 0.972, F1 : 0.02940
+[TEST ] Epoch 068 // (avg) Loss : 0.199, Accuracy : 0.937, F1 : 0.02823
+[TRAIN] Epoch 069 // (avg) Loss : 0.081, Accuracy : 0.970, F1 : 0.02937
+[TEST ] Epoch 069 // (avg) Loss : 0.228, Accuracy : 0.933, F1 : 0.02818
+[TRAIN] Epoch 070 // (avg) Loss : 0.082, Accuracy : 0.972, F1 : 0.02946
+[TEST ] Epoch 070 // (avg) Loss : 0.292, Accuracy : 0.932, F1 : 0.02779
+[TRAIN] Epoch 071 // (avg) Loss : 0.071, Accuracy : 0.975, F1 : 0.02965
+[TEST ] Epoch 071 // (avg) Loss : 0.240, Accuracy : 0.938, F1 : 0.02821
+[TRAIN] Epoch 072 // (avg) Loss : 0.067, Accuracy : 0.976, F1 : 0.02972
+[TEST ] Epoch 072 // (avg) Loss : 0.182, Accuracy : 0.946, F1 : 0.02853
+[TRAIN] Epoch 073 // (avg) Loss : 0.082, Accuracy : 0.971, F1 : 0.02952
+[TEST ] Epoch 073 // (avg) Loss : 0.187, Accuracy : 0.941, F1 : 0.02802
+[TRAIN] Epoch 074 // (avg) Loss : 0.062, Accuracy : 0.979, F1 : 0.02993
+[TEST ] Epoch 074 // (avg) Loss : 0.251, Accuracy : 0.942, F1 : 0.02835
+[TRAIN] Epoch 075 // (avg) Loss : 0.072, Accuracy : 0.976, F1 : 0.02970
+[TEST ] Epoch 075 // (avg) Loss : 0.249, Accuracy : 0.930, F1 : 0.02795
+[TRAIN] Epoch 076 // (avg) Loss : 0.064, Accuracy : 0.978, F1 : 0.02987
+[TEST ] Epoch 076 // (avg) Loss : 0.263, Accuracy : 0.935, F1 : 0.02831
+[TRAIN] Epoch 077 // (avg) Loss : 0.078, Accuracy : 0.972, F1 : 0.02951
+[TEST ] Epoch 077 // (avg) Loss : 0.273, Accuracy : 0.933, F1 : 0.02781
+[TRAIN] Epoch 078 // (avg) Loss : 0.069, Accuracy : 0.977, F1 : 0.02984
+[TEST ] Epoch 078 // (avg) Loss : 0.202, Accuracy : 0.948, F1 : 0.02861
+[TRAIN] Epoch 079 // (avg) Loss : 0.063, Accuracy : 0.977, F1 : 0.02981
+[TEST ] Epoch 079 // (avg) Loss : 0.252, Accuracy : 0.936, F1 : 0.02830
+[TRAIN] Epoch 080 // (avg) Loss : 0.066, Accuracy : 0.976, F1 : 0.02976
+[TEST ] Epoch 080 // (avg) Loss : 0.213, Accuracy : 0.939, F1 : 0.02834
+[TRAIN] Epoch 081 // (avg) Loss : 0.061, Accuracy : 0.978, F1 : 0.02994
+[TEST ] Epoch 081 // (avg) Loss : 0.223, Accuracy : 0.930, F1 : 0.02814
+[TRAIN] Epoch 082 // (avg) Loss : 0.068, Accuracy : 0.977, F1 : 0.02981
+[TEST ] Epoch 082 // (avg) Loss : 0.194, Accuracy : 0.942, F1 : 0.02857
+[TRAIN] Epoch 083 // (avg) Loss : 0.064, Accuracy : 0.977, F1 : 0.02984
+[TEST ] Epoch 083 // (avg) Loss : 0.203, Accuracy : 0.937, F1 : 0.02836
+[TRAIN] Epoch 084 // (avg) Loss : 0.057, Accuracy : 0.980, F1 : 0.03002
+[TEST ] Epoch 084 // (avg) Loss : 0.199, Accuracy : 0.939, F1 : 0.02841
+[TRAIN] Epoch 085 // (avg) Loss : 0.060, Accuracy : 0.979, F1 : 0.02988
+[TEST ] Epoch 085 // (avg) Loss : 0.227, Accuracy : 0.932, F1 : 0.02797
+[TRAIN] Epoch 086 // (avg) Loss : 0.063, Accuracy : 0.979, F1 : 0.03001
+[TEST ] Epoch 086 // (avg) Loss : 0.267, Accuracy : 0.926, F1 : 0.02781
+[TRAIN] Epoch 087 // (avg) Loss : 0.060, Accuracy : 0.978, F1 : 0.02976
+[TEST ] Epoch 087 // (avg) Loss : 0.241, Accuracy : 0.939, F1 : 0.02837
+[TRAIN] Epoch 088 // (avg) Loss : 0.069, Accuracy : 0.977, F1 : 0.02974
+[TEST ] Epoch 088 // (avg) Loss : 0.198, Accuracy : 0.941, F1 : 0.02855
+[TRAIN] Epoch 089 // (avg) Loss : 0.056, Accuracy : 0.980, F1 : 0.03007
+[TEST ] Epoch 089 // (avg) Loss : 0.236, Accuracy : 0.932, F1 : 0.02823
+[TRAIN] Epoch 090 // (avg) Loss : 0.057, Accuracy : 0.981, F1 : 0.03004
+[TEST ] Epoch 090 // (avg) Loss : 0.244, Accuracy : 0.933, F1 : 0.02788
+[TRAIN] Epoch 091 // (avg) Loss : 0.055, Accuracy : 0.981, F1 : 0.02999
+[TEST ] Epoch 091 // (avg) Loss : 0.225, Accuracy : 0.934, F1 : 0.02822
+[TRAIN] Epoch 092 // (avg) Loss : 0.055, Accuracy : 0.981, F1 : 0.03011
+[TEST ] Epoch 092 // (avg) Loss : 0.340, Accuracy : 0.934, F1 : 0.02807
+[TRAIN] Epoch 093 // (avg) Loss : 0.070, Accuracy : 0.976, F1 : 0.02981
+[TEST ] Epoch 093 // (avg) Loss : 0.385, Accuracy : 0.918, F1 : 0.02697
+[TRAIN] Epoch 094 // (avg) Loss : 0.051, Accuracy : 0.982, F1 : 0.03013
+[TEST ] Epoch 094 // (avg) Loss : 0.269, Accuracy : 0.931, F1 : 0.02805
+[TRAIN] Epoch 095 // (avg) Loss : 0.046, Accuracy : 0.985, F1 : 0.03029
+[TEST ] Epoch 095 // (avg) Loss : 0.312, Accuracy : 0.923, F1 : 0.02716
+[TRAIN] Epoch 096 // (avg) Loss : 0.053, Accuracy : 0.982, F1 : 0.03009
+[TEST ] Epoch 096 // (avg) Loss : 0.304, Accuracy : 0.925, F1 : 0.02799
+[TRAIN] Epoch 097 // (avg) Loss : 0.064, Accuracy : 0.978, F1 : 0.02988
+[TEST ] Epoch 097 // (avg) Loss : 0.274, Accuracy : 0.931, F1 : 0.02787
+[TRAIN] Epoch 098 // (avg) Loss : 0.053, Accuracy : 0.982, F1 : 0.02997
+[TEST ] Epoch 098 // (avg) Loss : 0.164, Accuracy : 0.958, F1 : 0.02916
+[TRAIN] Epoch 099 // (avg) Loss : 0.051, Accuracy : 0.983, F1 : 0.03020
+[TEST ] Epoch 099 // (avg) Loss : 0.277, Accuracy : 0.924, F1 : 0.02778
+
+
+
+################################################################################
+:::학습종료:::
+최고 accuracy : 0.9582010507583618, 최저 loss : 0.122096381883541, 최고 F1 : 0.029164993381958437
+################################################################################
+test inference is done!
+
+--------------------------------------------------------------------------------
+
+Finish_Date    : 20210827_023211
