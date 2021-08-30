@@ -68,4 +68,30 @@ class resnetbase(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.superM(x)
         return x
-    
+
+class MultiModelMergeModel(nn.Module):
+    def __init__(self, modelMASK, modelAGE, modelGENDER,
+                    concatclasses : int = 8 , num_classes: int = 18,
+                    prev_model_frz=True ):
+        super().__init__()
+        self.prev_model_frz = prev_model_frz
+
+        self.modelMASK = modelMASK
+        self.modelAGE = modelAGE
+        self.modelGENDER = modelGENDER
+        self.classifier = nn.Sequential(
+            nn.Linear(concatclasses, 32),
+            nn.ReLU(inplace=True),
+            nn.Linear(32, num_classes),
+        )
+        
+    def forward(self, IMAGE):
+        MASK = self.modelMASK(IMAGE)
+        AGE = self.modelAGE(IMAGE)
+        GENDER = self.modelGENDER(IMAGE)
+        if self.prev_model_frz :
+            MERGED = torch.cat((MASK.detach(), AGE.detach(), GENDER.detach()), dim=1)
+        else :
+            MERGED = torch.cat((MASK, AGE, GENDER), dim=1)
+        MERGED = self.classifier(nn.functional.relu(MERGED))
+        return MERGED
