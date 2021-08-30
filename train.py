@@ -134,7 +134,8 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
     for epoch in range(args.epochs):
         # train loop
         model.train()
-        train_dataset.dataset.set_transform(train_transform)
+        if isinstance(train_dataset, Subset):
+            train_dataset.dataset.set_transform(train_transform)
 
         loss_value = 0
         matches = 0
@@ -179,7 +180,8 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
         with torch.no_grad():
             print("Calculating validation results...")
             model.eval()
-            valid_dataset.dataset.set_transform(valid_transform)
+            if isinstance(valid_dataset, Subset):
+                valid_dataset.dataset.set_transform(valid_transform)
 
             val_loss_items = []
             val_acc_items = []
@@ -214,23 +216,23 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             val_f1 = np.sum(val_f1_items) / len(valid_loader)
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
                 # stop_cnt = 0
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
                 # print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
                 # stop_cnt = 0
                 best_val_loss = val_loss
                 
             if val_f1 > best_val_f1:
                 print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/{args.name}_best.pth")
+                torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
                 stop_cnt = 0
                 best_val_f1 = val_f1
                 
-            torch.save(model.state_dict(), f"{args.save_dir}/last.pth")
+            torch.save(model.state_dict(), f"{args.save_dir}/{args.name}last.pth")
             print(
                 f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2}, f1: {val_f1:4.2} || "
                 f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} best F1: {best_val_f1:4.2}"
@@ -307,6 +309,8 @@ if __name__ == '__main__':
     with open(os.path.join(args.save_dir, 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
     
+    args.name = ""
+    
     # -- settings
     use_cuda = torch.cuda.is_available()
 
@@ -355,14 +359,14 @@ if __name__ == '__main__':
 
         # -- dataset
         dataset_module = getattr(import_module("datasets." + args.userdataset), args.traindataset)  # default: BaseAugmentation
-        train_dataset = dataset_module(
+        full_dataset = dataset_module(
             data_dir=args.data_dir,
             mode='train',
             transform = train_transform
         )
 
         skf = StratifiedKFold(n_splits=args.fold, shuffle=True, random_state=args.seed)
-        for fold, (train_ids, valid_ids) in enumerate(skf.split(train_dataset.df_csv, train_dataset.df_csv.gender_age_cls)):
+        for fold, (train_ids, valid_ids) in enumerate(skf.split(full_dataset.df_csv, full_dataset.df_csv.gender_age_cls)):
             print('-'*50)
             print(f'FOLD [{fold}]')
             print('-'*50)
@@ -372,9 +376,9 @@ if __name__ == '__main__':
             valid_image_ids = sum([[x*7+i for i in range(7)] for x in valid_ids],[])
 
             # -- Dataset
-            train_dataset = Subset(train_dataset, train_image_ids)
-            valid_dataset = Subset(train_dataset, valid_image_ids)
+            train_dataset = Subset(full_dataset, train_image_ids)
+            valid_dataset = Subset(full_dataset, valid_image_ids)
 
-            args.name = f"[{fold}]_" + args.name
-
+            args.name = f"[{fold}]_"
+            
             train(args, train_dataset, valid_dataset, train_transform, valid_transform)
