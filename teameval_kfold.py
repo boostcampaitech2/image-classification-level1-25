@@ -95,8 +95,18 @@ def increment_path(path, exist_ok=False):
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)
+    
+    save_dir = os.path.join(args.save_dir,args.name)
 
-    save_dir = increment_path(os.path.join(model_dir, args.name))
+    try:
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+    except OSError:
+        print ('Error: Creating directory. ' +  save_dir)
+    
+    with open(os.path.join(save_dir, 'config.json'), 'w', encoding='utf-8') as f:
+        json.dump(vars(args), f, ensure_ascii=False, indent=4)
+
     test_dir = args.eval_dir
     submission = pd.read_csv(os.path.join(test_dir, 'info.csv'))
     image_dir = os.path.join(test_dir, 'images')
@@ -147,26 +157,6 @@ def train(data_dir, model_dir, args):
     team_eval_dataset.set_transform(train_transform)
     # test_dataset.set_transform(train_transform)
 
-
-    # -- data_loader
-    team_eval_loader = DataLoader(
-        team_eval_dataset,
-        batch_size=args.valid_batch_size,
-        num_workers=multiprocessing.cpu_count()//2,
-        shuffle=False,
-        pin_memory=use_cuda,
-        drop_last=True,
-    )
-
-    test_loader = DataLoader(
-        test_dataset,
-        batch_size=args.batch_size,
-        shuffle=False
-    )
-
-
-    team_eval_preds = [0 for _ in range(len(team_eval_dataset))]
-    test_preds = [0 for _ in range(len(test_dataset))]
     skf = StratifiedKFold(n_splits=args.num_split, shuffle=True, random_state=25)
     for fold, (train_ids, valid_ids) in enumerate(skf.split(train_dataset.df_csv, train_dataset.df_csv.gender_age_cls)):
         # Print
@@ -205,7 +195,7 @@ def train(data_dir, model_dir, args):
         model = model_module(
             num_classes=num_classes
         ).to(device)
-        model = torch.nn.DataParallel(model)
+        # model = torch.nn.DataParallel(model)
 
         # -- loss & metric
         criterion = create_criterion(args.criterion)  # default: cross_entropy
@@ -289,44 +279,14 @@ def train(data_dir, model_dir, args):
                 print(f"val_acc : {valid_acc}")
                 best_val_acc = valid_acc
                 counter = 0
-                
+                torch.save(model.state_dict(), os.path.join(save_dir, f"[{fold}]_best.pth"))
             else:
                 counter += 1
             # patience 횟수 동안 성능 향상이 없을 경우 학습을 종료시킵니다.
             if counter > args.patience:
                 print("Early Stopping...")
                 break
-
-
             print('{} Acc: {:.4f} f1-score: {:.4f}\n'.format('valid', valid_acc, valid_f1))
-
-        # team_eval_pred
-        all_predictions = []
-        answers = []
-        for images, labels in tqdm(team_eval_loader):
-            with torch.no_grad():
-                images = images.to(device)
-                labels = labels.to(device)
-                outputs = model(images)
-                all_predictions.extend(outputs.cpu().numpy())
-                answers.extend(labels.cpu().numpy())
-        team_eval_preds = [x+y for x,y in zip(team_eval_preds,all_predictions)]
-
-        # test_pred
-        all_predictions = []
-        for images in tqdm(test_loader):
-            with torch.no_grad():
-                images = images.to(device)
-                outputs = model(images)
-                all_predictions.extend(outputs.cpu().numpy())
-
-        test_preds = [x+y for x,y in zip(test_preds,all_predictions)]
-
-    # Check Result
-    print(f'Team eval accuracy : {torch.sum(torch.tensor(answers) == torch.tensor(np.argmax(team_eval_preds,axis=1)))/len(answers):.4}, f1-score : {f1_score(answers,np.argmax(team_eval_preds,axis=1),average="macro"):.4}')
-    submission['ans'] = np.argmax(test_preds,axis = 1)
-    submission.to_csv('stratified.csv', index=False)
-    print('Done')
 
 
 if __name__ == '__main__':
@@ -342,11 +302,11 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='teamDataset', help='dataset augmentation type (default: MaskBaseDataset)')
     parser.add_argument('--trainaug', type=str, default='A_centercrop_trans', help='data augmentation type (default: BaseAugmentation)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='data augmentation type (default: BaseAugmentation)')
-    parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
-    parser.add_argument('--batch_size', type=int, default=100, help='input batch size for training (default: 64)')
+    parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
+    parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 64)')
     parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 1000)')
-    parser.add_argument('--model', type=str, default='resnetbase', help='model type (default: resnetbase)')
-    parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer type (default: SGD)')
+    parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: resnetbase)')
+    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')

@@ -18,6 +18,17 @@ IMG_EXTENSIONS = [
     ".PNG", ".ppm", ".PPM", ".bmp", ".BMP",
 ]
 
+def set_gender(gender):
+    return 0 if gender == 'male' else 1
+
+def set_age(age):
+    if age<30:
+        return 0
+    elif age<60:
+        return 1
+    else:
+        return 2
+
 class MaskLabels(int, Enum):
     MASK = 0
     INCORRECT = 1
@@ -270,9 +281,15 @@ class TestDataset(Dataset):
         return len(self.img_paths)
 
 class TestDatasetA(Dataset):
+<<<<<<< HEAD
     def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transfrom = None):
         self.img_paths = img_paths
         self.transform = transfrom
+=======
+    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transform = None):
+        self.img_paths = img_paths
+        self.transform = transform
+>>>>>>> master
 
     def __getitem__(self, index):
         image = Image.open(self.img_paths[index])
@@ -288,25 +305,29 @@ class TestDatasetA(Dataset):
 class basicDatasetA(Dataset):
     num_classes = 3 * 2 * 3
     
-    def __init__(self, data_dir, mode = 'ALL', transform = None, val_ratio = 0.1):
+    def __init__(self, data_dir, mode = 'ALL', transform = None):
         self.main_path = data_dir
         self.transform = transform
         self.mode = mode
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
         df_origin['gender'] = df_origin['gender'].map({'male':0, 'female':1})
-        df_origin = df_origin.sample(frac=1).reset_index(drop=True)
+        df_origin['gender_age_cls'] = df_origin.apply(lambda x : set_age(x['age']) + 3*x['gender'] ,axis=1)
 
-        train_share = 1 - val_ratio
-        total = len(df_origin)
+        train_df, eval_df = train_test_split(df_origin, test_size=150, stratify=df_origin.gender_age_cls, random_state=25)
+        train_df.reset_index(drop=True, inplace=True)
+        eval_df.reset_index(drop=True, inplace=True)
+
         if mode == 'ALL':
             self.df_csv = df_origin
         elif mode == 'train' :
-            self.df_csv = df_origin.head(int(total*train_share)) 
-        elif mode == 'valid' :
-            self.df_csv = df_origin.tail(total-int(total*train_share))
+            self.df_csv = train_df
+        elif mode == 'eval' :
+            self.df_csv = eval_df
         else :
-            raise Exception(f'train error {mode} not in [''ALL'', ''train'', ''test'']')
+            raise Exception(f'train error {mode} not in [ALL, train, eval]')
         
+    def set_transform(self, transform):
+        self.transform = transform
 
     def __getitem__(self, index):
         main_index, sub_index = index//7, index%7
@@ -337,8 +358,8 @@ class basicDatasetA(Dataset):
     def __len__(self):
         return len(self.df_csv)*7
 
-def set_gender(gender):
-    return 0 if gender == 'male' else 1
+# def set_gender(gender):
+#     return 0 if gender == 'male' else 1
 
 def set_age(age):
     if age<30:
@@ -358,7 +379,7 @@ class teamDataset(Dataset):
 
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
         df_origin['gender'] = df_origin['gender'].map({'male':0, 'female':1})
-        df_origin['gender_age_cls'] = df_origin.apply(lambda x : set_age(x['age']) + 3*set_gender(x['gender']) ,axis=1)
+        df_origin['gender_age_cls'] = df_origin.apply(lambda x : set_age(x['age']) + 3*x['gender'] ,axis=1)
         
         train_df, val_df = train_test_split(df_origin, test_size=150, stratify=df_origin.gender_age_cls, random_state=25)
 
