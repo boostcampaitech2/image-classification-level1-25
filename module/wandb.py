@@ -40,8 +40,6 @@ def log_wandb(phase='train', acc=0, f1_score=0, loss=0, single_table=False):
 
         
 def show_images_wandb(images, y_labels, preds):
-    print("func_preds")
-    print(preds)
     for i in range(len(y_labels)):
         im = images[i,:,:,:]
         im = im.permute(1,2,0).cuda().cpu().detach().numpy()
@@ -53,7 +51,6 @@ def show_images_wandb(images, y_labels, preds):
         # wandb.log({"image_preds_table": my_table})
 
 def draw_result_chart_wandb(y_data, title):
-    print(y_data)
     y_data = list(y_data)
     y_data_counts = []
     y_data_dict = {x:y_data.count(x) for x in y_data}
@@ -61,13 +58,5 @@ def draw_result_chart_wandb(y_data, title):
         y_data_counts.append([k,v])
     y_data_table = wandb.Table(data=y_data_counts, columns=["label", "counts"])
     
-    wandb.log({"Comparison of results" : wandb.plot.bar(y_data_table, "label", "counts",
+    wandb.log({title: wandb.plot.bar(y_data_table, "label", "counts",
                                 title=title)})
-
-
-
-
-
-# print(y_data_dict)
-
-
