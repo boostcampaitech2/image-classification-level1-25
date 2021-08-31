@@ -9,20 +9,30 @@ from torch.utils.data import DataLoader
 from datasets.dataset import TestDatasetA, MaskBaseDataset
 
 
-def load_model(saved_model, filename, num_classes, device):
-    model_cls = getattr(import_module("models.model"), args.model)
-    model = model_cls(
-        num_classes=num_classes
-    )
-    # model = torch.nn.DataParallel(model)
-    
-    # tarpath = os.path.join(saved_model, 'best.tar.gz')
-    # tar = tarfile.open(tarpath, 'r:gz')
-    # tar.extractall(path=saved_model)
+def load_model(saved_model, filename, modelname, num_classes, device):
+    model = None
+    if len(data := [s for s in os.listdir(saved_model) if s.endswith(filename)]) == 1:
+        model_cls = getattr(import_module("models.model"), modelname)
+        model = model_cls(
+            num_classes=num_classes
+        )
+        # model = torch.nn.DataParallel(model)
 
-    model_path = os.path.join(saved_model, filename)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+        model_path = os.path.join(saved_model, data[0])
+        model.load_state_dict(torch.load(model_path, map_location=device))
+    else :
+        model_cls = getattr(import_module("models.model"), 'ensemble')
+        model = model_cls(
+            modelname = modelname,
+            length = len(data),
+            num_classes=num_classes,
+            device = device
+        )
+        # model = torch.nn.DataParallel(model)
 
+        for M, d in zip(model.superM, data):
+            model_path = os.path.join(saved_model, d)
+            M.load_state_dict(torch.load(model_path, map_location=device))
     return model
 
 
@@ -34,7 +44,8 @@ def inference(args):
     device = torch.device("cuda" if use_cuda else "cpu")
 
     num_classes = MaskBaseDataset.num_classes  # 18
-    model = load_model(args.save_dir, args.filename, num_classes, device).to(device)
+    model = load_model(args.save_dir, args.filename, args.model, num_classes, device).to(device)
+
     model.eval()
 
     img_root = os.path.join(args.data_dir, 'images')
@@ -76,8 +87,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Data and model checkpoints directories
-    parser.add_argument('--batch_size', type=int, default=128, help='input batch size for validing (default: 1000)')
-    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
+    parser.add_argument('--batch_size', type=int, default=128, help='input batch size for validing (default: 128)')
+    parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: BaseModel)')
     parser.add_argument('--filename', type=str, default='best.pth', help='save file name (default: best.pth)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='validation data augmentation type (default: A_centercrop_trans)')
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
@@ -89,3 +100,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     inference(args)
+
