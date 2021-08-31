@@ -20,6 +20,7 @@ from torchvision import transforms
 
 from datasets.dataset import MaskBaseDataset
 from module.loss import create_criterion
+from module.wandb import draw_result_chart_wandb, init_wandb, log_wandb, login_wandb, show_images_wandb
 
 import timm
 import torch.nn as nn
@@ -231,6 +232,7 @@ def train(data_dir, model_dir, args):
             # Set Trans
             all_dataset.set_transform(train_transform)
 
+            init_wandb(epoch, 'train', args, fold=fold)
             for (inputs, labels) in tqdm(train_loader):
                 inputs = inputs.to(device)
                 labels = labels.to(device)
@@ -247,9 +249,15 @@ def train(data_dir, model_dir, args):
                     optimizer.step()
 
                     # statistics
-                    running_loss += loss.item() * inputs.shape[0]
-                    running_acc += torch.sum(preds == labels.data)
-                    running_f1 += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
+                    loss_val = loss.item() * inputs.shape[0]
+                    acc_val = torch.sum(preds == labels.data)
+                    f1_val = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
+
+                    running_loss += loss_val
+                    running_acc += acc_val
+                    running_f1 += f1_val
+                
+                log_wandb('train', acc_val/len(labels), f1_val, loss_val)
 
             epoch_acc = running_acc/len(train_loader.dataset)
             epoch_loss = running_loss/len(train_loader.dataset)
@@ -264,6 +272,7 @@ def train(data_dir, model_dir, args):
             # Set Trans
             all_dataset.set_transform(valid_transform)
 
+            init_wandb(epoch, 'valid', args, fold=fold)         
             for val_batch in tqdm(valid_loader):
                 inputs, labels = val_batch
                 inputs = inputs.to(device)
@@ -274,10 +283,15 @@ def train(data_dir, model_dir, args):
                     _, preds = torch.max(logits, 1)
 
                     # statistics
-                    valid_acc += torch.sum(preds == labels.data)
-                    valid_loss += criterion(logits, labels).item()
-                    valid_f1 += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
+                    acc_val = torch.sum(preds == labels.data)
+                    loss_val = criterion(logits, labels).item()
+                    f1_val = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
                     
+                    valid_acc += acc_val
+                    valid_loss += criterion(logits, labels).item()
+                    valid_f1 += f1_val
+                    
+                log_wandb('valid', acc_val/len(labels), f1_val, loss_val)
 
             valid_acc /= len(valid_loader.dataset)
             valid_f1 /= len(valid_loader)
@@ -311,6 +325,11 @@ def train(data_dir, model_dir, args):
                 all_predictions.extend(outputs.cpu().numpy())
                 answers.extend(labels.cpu().numpy())
         team_eval_preds = [x+y for x,y in zip(team_eval_preds,all_predictions)]
+        team_eval_acc = np.round(torch.sum(torch.tensor(answers) == torch.tensor(np.argmax(team_eval_preds,axis=1)))/len(answers),4)
+        team_eval_f1 = np.round(f1_score(answers,np.argmax(team_eval_preds,axis=1),average="macro"),4)
+        log_wandb('team_eval', team_eval_acc, team_eval_f1)
+        draw_result_chart_wandb(np.argmax(team_eval_preds,axis=1))
+        show_images_wandb(images,labels,np.argmax(outputs.cpu().data.numpy(),axis=1))
 
         # test_pred
         all_predictions = []
@@ -323,7 +342,7 @@ def train(data_dir, model_dir, args):
         test_preds = [x+y for x,y in zip(test_preds,all_predictions)]
 
     # Check Result
-    print(f'Team eval accuracy : {torch.sum(torch.tensor(answers) == torch.tensor(np.argmax(team_eval_preds,axis=1)))/len(answers):.4}, f1-score : {f1_score(answers,np.argmax(team_eval_preds,axis=1),average="macro"):.4}')
+    print(f'Team eval accuracy : {team_eval_acc}, f1-score : {team_eval_f1}')
     submission['ans'] = np.argmax(test_preds,axis = 1)
     submission.to_csv('stratified.csv', index=False)
     print('Done')
@@ -331,10 +350,6 @@ def train(data_dir, model_dir, args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-
-    from dotenv import load_dotenv
-    import os
-    load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
     parser.add_argument('--seed', type=int, default=25, help='random seed (default: 25)')
@@ -366,10 +381,20 @@ if __name__ == '__main__':
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
     parser.add_argument('--save_dir', type=str, default=os.environ.get('SM_SAVE_DIR', './save'))
 
+    # Wandb Env File Path
+    parser.add_argument('--dotenv_path', default='/opt/ml/image-classification-level1-25/wandb.env', help='input your dotenv path')
+    parser.add_argument('--wandb_entity', default='boostcamp-25', help='input your wandb entity')
+    parser.add_argument('--wandb_project', default='image-classification-level1-25', help='input your wandb project')
+    parser.add_argument('--wandb_unique_tag', default='tag_name', help='input your wandb unique tag')
+
+
+    
     args = parser.parse_args()
     print(args)
 
     data_dir = args.data_dir
     model_dir = args.model_dir
 
+    login_wandb(args.dotenv_path)
+    
     train(data_dir, model_dir, args)
