@@ -38,6 +38,7 @@ class rexnet_200base(nn.Module):
         return x
 
 
+
 if __name__ == '__main__':
     M = rexnet_200base(num_classes = 18)
     print(M)
