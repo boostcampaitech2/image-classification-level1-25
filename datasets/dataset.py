@@ -281,9 +281,9 @@ class TestDataset(Dataset):
         return len(self.img_paths)
 
 class TestDatasetA(Dataset):
-    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transfrom = None):
+    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transform = None):
         self.img_paths = img_paths
-        self.transform = transfrom
+        self.transform = transform
 
     def __getitem__(self, index):
         image = Image.open(self.img_paths[index])
@@ -352,6 +352,16 @@ class basicDatasetA(Dataset):
     def __len__(self):
         return len(self.df_csv)*7
 
+# def set_gender(gender):
+#     return 0 if gender == 'male' else 1
+
+def set_age(age):
+    if age<30:
+        return 0
+    elif age<60:
+        return 1
+    else:
+        return 2
 
 class teamDataset(Dataset):
     num_classes = 3 * 2 * 3

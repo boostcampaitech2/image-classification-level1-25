@@ -70,7 +70,6 @@ class resnetbase(nn.Module):
         x = self.superM(x)
         return x
 
-
 class rexnet_200base(nn.Module):
     def __init__(self, num_classes: int = 1000):
         super().__init__()
