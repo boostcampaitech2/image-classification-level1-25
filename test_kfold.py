@@ -225,7 +225,7 @@ def train(data_dir, model_dir, args):
             
             # Set Trans
             all_dataset.set_transform(valid_transform)
-
+            val_loss_items = []
             for val_batch in tqdm(valid_loader):
                 inputs, labels = val_batch
                 inputs = inputs.to(device)
@@ -237,13 +237,14 @@ def train(data_dir, model_dir, args):
 
                     # statistics
                     valid_acc += torch.sum(preds == labels.data)
-                    valid_loss += criterion(logits, labels).item()*inputs.shape[0]
+                    valid_loss = criterion(logits, labels).item() 
                     valid_f1 += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
-                    
+                    val_loss_items.append(valid_loss)
 
             valid_acc /= len(valid_loader.dataset)
             valid_f1 /= len(valid_loader)
-            valid_loss /= len(valid_loader.dataset)
+            valid_loss = np.sum(val_loss_items) / len(valid_loader)
+
 
             best_val_loss = min(best_val_loss,valid_loss)
             if valid_acc > best_val_acc:
@@ -260,7 +261,7 @@ def train(data_dir, model_dir, args):
                 break
 
 
-            print('{} Acc: {:.4f} f1-score: {:.4f}\n'.format('valid', valid_acc, valid_f1))
+            print('{} Loss: {:.4f} Acc: {:.4f} F1-score: {:.4f}\n'.format('valid', valid_loss, valid_acc, valid_f1))
 
 
 if __name__ == '__main__':
