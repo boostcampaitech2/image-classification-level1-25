@@ -132,7 +132,6 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
     best_val_f1 = 0
     
     stop_cnt = 0
-    init_wandb('train', args)
     for epoch in range(args.epochs):
         # train loop
         model.train()
@@ -365,6 +364,7 @@ if __name__ == '__main__':
         train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
         valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
 
+        init_wandb('train', args)
         train(args, train_dataset, valid_dataset, train_transform, valid_transform)
 
     else :
@@ -396,6 +396,7 @@ if __name__ == '__main__':
             valid_dataset = Subset(full_dataset, valid_image_ids)
 
             args.fold_idx = fold
+            init_wandb('train', args, fold=fold)
             
             train(args, train_dataset, valid_dataset, train_transform, valid_transform)
 
