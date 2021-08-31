@@ -2,11 +2,13 @@ import argparse
 import os
 from importlib import import_module
 
+import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader
+from sklearn.metrics import f1_score
 
-from datasets.dataset import TestDatasetA, MaskBaseDataset
+from datasets.dataset import basicDatasetA, MaskBaseDataset
 
 
 def load_model(saved_model, filename, modelname, num_classes, device):
@@ -43,24 +45,18 @@ def inference(args):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    num_classes = MaskBaseDataset.num_classes  # 18
-    model = load_model(args.save_dir, args.filename, args.model, num_classes, device).to(device)
+    model = load_model(args.save_dir, args.filename, args.model, args.num_classes, device).to(device)
 
     model.eval()
-
-    img_root = os.path.join(args.data_dir, 'images')
-    info_path = os.path.join(args.data_dir, 'info.csv')
-    info = pd.read_csv(info_path)
-
-    img_paths = [os.path.join(img_root, img_id) for img_id in info.ImageID]
 
     valid_transform_module = getattr(import_module("trans.trans"), args.validaug)  # default: BaseAugmentation
     valid_transform = valid_transform_module(
         resize=args.resize,
     )
 
-    dataset = TestDatasetA(img_paths, args.resize, transform=valid_transform)
-    loader = torch.utils.data.DataLoader(
+    dataset = basicDatasetA(data_dir=args.data_dir, mode='eval', transform=valid_transform)
+
+    loader = DataLoader(
         dataset,
         batch_size=args.batch_size,
         num_workers=8,
@@ -70,17 +66,29 @@ def inference(args):
     )
 
     print("Calculating inference results..")
-    preds = []
+    val_acc_items = []
+    val_f1_items = []
     with torch.no_grad():
-        for idx, images in enumerate(loader):
-            images = images.to(device)
-            pred = model(images)
-            pred = pred.argmax(dim=-1)
-            preds.extend(pred.cpu().numpy())
+        for idx, train_batch in enumerate(loader):
+            inputs, labels = train_batch
+            inputs = inputs.to(device)
+            labels = labels.to(device)
 
-    info['ans'] = preds
-    info.to_csv(os.path.join(args.save_dir, f'output.csv'), index=False)
-    print(f'Inference Done!')
+            outs = model(inputs)
+            preds = torch.argmax(outs, dim=-1)
+
+            acc_item = (labels == preds).sum().item()
+            f1 = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
+            val_acc_items.append(acc_item)
+            val_f1_items.append(f1)
+    
+        val_acc = np.sum(val_acc_items) / len(dataset)
+        val_f1 = np.sum(val_f1_items) / len(loader)
+        print(
+                f"[Eval] acc : {val_acc:4.2%}, f1: {val_f1:5.4}"
+            )
+
+    print(f'Team eval Done!')
 
 
 if __name__ == '__main__':
@@ -92,9 +100,10 @@ if __name__ == '__main__':
     parser.add_argument('--filename', type=str, default='best.pth', help='save file name (default: best.pth)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='validation data augmentation type (default: A_centercrop_trans)')
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
+    parser.add_argument('--num_classes',type=int, default = 18, help = 'num_classes')
 
     # Container environment
-    parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
+    parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/train/'))
     parser.add_argument('--save_dir', type=str, default=os.environ.get('SM_CHANNEL_SAVE', './save'))
 
     args = parser.parse_args()

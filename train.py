@@ -140,7 +140,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
         loss_value = 0
         matches = 0
         f1_sum = 0
-        print(f"Epoch[{epoch}/{args.epochs}]")
+        print(f"Epoch[{epoch+1}/{args.epochs}]")
         for idx, train_batch in enumerate(pbar := tqdm(train_loader, ncols=100)):
             inputs, labels = train_batch
             inputs = inputs.to(device)
@@ -216,23 +216,23 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             val_f1 = np.sum(val_f1_items) / len(valid_loader)
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
+                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
                 print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
+                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 stop_cnt = 0
                 best_val_loss = val_loss
                 
             if val_f1 > best_val_f1:
                 # print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
-                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
+                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_f1 = val_f1
                 
-            torch.save(model.state_dict(), f"{args.save_dir}/{args.name}last.pth")
+            torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_last.pth")
             print(
                 f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2}, f1: {val_f1:4.2} || "
                 f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} best F1: {best_val_f1:4.2}"
@@ -280,6 +280,8 @@ if __name__ == '__main__':
     parser.add_argument('--earlystop', type=int, default=0, help='set earlystop count default 0 is No earlystop')
     parser.add_argument('--fold',type=int, default = 0, help = 'number of k-folds')
     parser.add_argument('--num_classes',type=int, default = 18, help = 'num_classes')
+    # parser.add_argument('--load_state',type=str, default = '', help = 'load_state dir')
+    parser.add_argument('--mode',type=str, default = 'train', help = 'train mode')
 
     
 
@@ -308,8 +310,7 @@ if __name__ == '__main__':
 
     with open(os.path.join(args.save_dir, 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
-    
-    args.name = ""
+
     
     # -- settings
     use_cuda = torch.cuda.is_available()
@@ -323,7 +324,8 @@ if __name__ == '__main__':
     valid_transform = valid_transform_module(
         resize=args.resize,
     )
-    
+
+    args.fold_idx = 0
     if args.fold == 0:
         # valid train mode
         print('#'*100)
@@ -334,12 +336,12 @@ if __name__ == '__main__':
         dataset_module = getattr(import_module("datasets." + args.userdataset), args.traindataset)  # default: BaseAugmentation
         train_dataset = dataset_module(
             data_dir=args.data_dir,
-            mode='train',
+            mode=args.mode,
             transform = train_transform
         )
         valid_dataset = dataset_module(
             data_dir=args.data_dir,
-            mode='train',
+            mode=args.mode,
             transform = valid_transform
         )
         total = len(train_dataset.df_csv)
@@ -361,7 +363,7 @@ if __name__ == '__main__':
         dataset_module = getattr(import_module("datasets." + args.userdataset), args.traindataset)  # default: BaseAugmentation
         full_dataset = dataset_module(
             data_dir=args.data_dir,
-            mode='train',
+            mode=args.mode,
             transform = train_transform
         )
 
@@ -379,6 +381,7 @@ if __name__ == '__main__':
             train_dataset = Subset(full_dataset, train_image_ids)
             valid_dataset = Subset(full_dataset, valid_image_ids)
 
-            args.name = f"[{fold}]_"
+            args.fold_idx = fold
             
             train(args, train_dataset, valid_dataset, train_transform, valid_transform)
+
