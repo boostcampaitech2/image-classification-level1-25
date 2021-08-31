@@ -352,6 +352,16 @@ class basicDatasetA(Dataset):
     def __len__(self):
         return len(self.df_csv)*7
 
+# def set_gender(gender):
+#     return 0 if gender == 'male' else 1
+
+def set_age(age):
+    if age<30:
+        return 0
+    elif age<60:
+        return 1
+    else:
+        return 2
 
 class teamDataset(Dataset):
     num_classes = 3 * 2 * 3
