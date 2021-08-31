@@ -349,6 +349,7 @@ if __name__ == '__main__':
         val_share = int(total * args.val_ratio)
         train_share = total - val_share
 
+        # 정확도 낮게 나오면 섞이는지 확인해야될듯?
         train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
         valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
 
@@ -373,6 +374,7 @@ if __name__ == '__main__':
             print('-'*50)
             print(f'FOLD [{fold}]')
             print('-'*50)
+            if fold < 4 : continue
 
             # -- Image index
             train_image_ids = sum([[x*7+i for i in range(7)] for x in train_ids],[])
