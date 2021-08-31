@@ -130,19 +130,6 @@ def train(data_dir, model_dir, args):
         train = 'train'
     )
 
-    # -- team_eval_dataset
-    team_eval_dataset = dataset_module(
-        data_path=data_dir,
-        train = 'eval'
-    )
-
-    # -- test_dataset
-    test_dataset_module = getattr(import_module("datasets." + args.userdataset), "TestDataset")
-    test_dataset = test_dataset_module(
-        img_paths = image_paths,
-        resize = args.resize
-    )
-
     # -- augmentation
     train_transform_module = getattr(import_module("trans." + args.usertrans), args.trainaug)  # default: BaseAugmentation
     train_transform = train_transform_module(
@@ -154,7 +141,6 @@ def train(data_dir, model_dir, args):
     )
 
     all_dataset.set_transform(train_transform)
-    team_eval_dataset.set_transform(train_transform)
     # test_dataset.set_transform(train_transform)
 
     skf = StratifiedKFold(n_splits=args.num_split, shuffle=True, random_state=25)
