@@ -14,6 +14,8 @@ import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from sklearn.model_selection import StratifiedKFold
+from torch.utils.data import Subset
 # from torch.utils.tensorboard import SummaryWriter
 
 from datasets.dataset import MaskBaseDataset
@@ -71,7 +73,7 @@ def increment_path(path, exist_ok=False):
     """ Automatically increment path, i.e. runs/exp --> runs/exp0, runs/exp1 etc.
 
     Args:
-        path (str or pathlib.Path): f"{save_dir}/{args.name}".
+        path (str or pathlib.Path): f"{args.save_dir}/{args.name}".
         exist_ok (bool): whether increment path (increment if False).
     """
     path = Path(path)
@@ -85,66 +87,32 @@ def increment_path(path, exist_ok=False):
         return f"{path}{n}"
 
 
-def train(args):
-    seed_everything(args.seed)
-
-    save_dir = increment_path(os.path.join(args.save_dir, args.name))
-
-    # -- settings
-    use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda" if use_cuda else "cpu")
-
-    # -- augmentation
-    train_transform_module = getattr(import_module("trans." + args.usertrans), args.trainaug)  # default: BaseAugmentation
-    train_transform = train_transform_module(
-        resize=args.resize,
-    )
-    valid_transform_module = getattr(import_module("trans." + args.usertrans), args.validaug)  # default: BaseAugmentation
-    valid_transform = valid_transform_module(
-        resize=args.resize,
-    )
-
-    # -- dataset
-    dataset_module = getattr(import_module("datasets." + args.userdataset), args.traindataset)  # default: BaseAugmentation
-    train_dataset = dataset_module(
-        data_dir=args.data_dir,
-        val_ratio=args.val_ratio,
-        mode='train',
-        transform = train_transform
-    )
-    valid_dataset = dataset_module(
-        data_dir=args.data_dir,
-        val_ratio=args.val_ratio,
-        mode='valid',
-        transform = valid_transform
-    )
-    num_classes = train_dataset.num_classes  # 18
-
+def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
     # -- data_loader
     train_loader = DataLoader(
         train_dataset,
         batch_size=args.batch_size,
         num_workers=multiprocessing.cpu_count()//2,
-        # num_workers=0,
         shuffle=True,
         pin_memory=use_cuda,
         drop_last=True,
     )
 
-    val_loader = DataLoader(
+    valid_loader = DataLoader(
         valid_dataset,
         batch_size=args.valid_batch_size,
         num_workers=multiprocessing.cpu_count()//2,
-        # num_workers=0,
         shuffle=False,
         pin_memory=use_cuda,
         drop_last=True,
     )
 
+    device = torch.device("cuda" if use_cuda else "cpu")
+
     # -- model
-    model_module = getattr(import_module("models."+args.usermodel), args.model)  # default: BaseModel
+    model_module = getattr(import_module("models."+args.usermodel), args.model)  # default: rexnet_200base
     model = model_module(
-        num_classes=num_classes
+        num_classes=args.num_classes
     ).to(device)
     # model = torch.nn.DataParallel(model)
 
@@ -158,23 +126,17 @@ def train(args):
     )
     scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
 
-    # -- logging
-    # logger = SummaryWriter(log_dir=save_dir)
-    try:
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-    except OSError:
-        print ('Error: Creating directory. ' +  save_dir)
-
-    with open(os.path.join(save_dir, 'config.json'), 'w', encoding='utf-8') as f:
-        json.dump(vars(args), f, ensure_ascii=False, indent=4)
-
     best_val_acc = 0
     best_val_loss = np.inf
     best_val_f1 = 0
+    
+    stop_cnt = 0
     for epoch in range(args.epochs):
         # train loop
         model.train()
+        if isinstance(train_dataset, Subset):
+            train_dataset.dataset.set_transform(train_transform)
+
         loss_value = 0
         matches = 0
         f1_sum = 0
@@ -218,11 +180,14 @@ def train(args):
         with torch.no_grad():
             print("Calculating validation results...")
             model.eval()
+            if isinstance(valid_dataset, Subset):
+                valid_dataset.dataset.set_transform(valid_transform)
+
             val_loss_items = []
             val_acc_items = []
             val_f1_items = []
             # figure = None
-            for val_batch in tqdm(val_loader, ncols=100):
+            for val_batch in tqdm(valid_loader, ncols=100):
                 inputs, labels = val_batch
                 inputs = inputs.to(device)
                 labels = labels.to(device)
@@ -246,22 +211,28 @@ def train(args):
                 #         inputs_np, labels, preds, n=16, shuffle=args.validdataset != "MaskSplitByProfileDataset"
                 #     )
 
-            val_loss = np.sum(val_loss_items) / len(val_loader)
+            val_loss = np.sum(val_loss_items) / len(valid_loader)
             val_acc = np.sum(val_acc_items) / len(valid_dataset)
-            val_f1 = np.sum(val_f1_items) / len(val_loader)
+            val_f1 = np.sum(val_f1_items) / len(valid_loader)
             if val_acc > best_val_acc:
-            #     print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-            #     torch.save(model.state_dict(), f"{save_dir}/best.pth")
+                # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
+                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
+                # stop_cnt = 0
                 best_val_acc = val_acc
+                
             if val_loss < best_val_loss:
-                # print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                # torch.save(model.state_dict(), f"{save_dir}/best.pth")
+                print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+                torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
+                stop_cnt = 0
                 best_val_loss = val_loss
+                
             if val_f1 > best_val_f1:
-                print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{save_dir}/best.pth")
+                # print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
+                # torch.save(model.state_dict(), f"{args.save_dir}/{args.name}best.pth")
+                # stop_cnt = 0
                 best_val_f1 = val_f1
-            torch.save(model.state_dict(), f"{save_dir}/last.pth")
+                
+            torch.save(model.state_dict(), f"{args.save_dir}/{args.name}last.pth")
             print(
                 f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2}, f1: {val_f1:4.2} || "
                 f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} best F1: {best_val_f1:4.2}"
@@ -270,6 +241,12 @@ def train(args):
             # logger.add_scalar("Val/accuracy", val_acc, epoch)
             # logger.add_figure("results", figure, epoch)
             print()
+
+        if args.earlystop != 0 and args.earlystop <= stop_cnt:
+            print(f'[earlystop: {stop_cnt}] No future. bye bye~~')
+            break
+        stop_cnt += 1
+
 
 
 if __name__ == '__main__':
@@ -287,12 +264,12 @@ if __name__ == '__main__':
     parser.add_argument('--trainaug', type=str, default='A_simple_trans', help='train data augmentation type (default: A_simple_trans)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='validation data augmentation type (default: A_centercrop_trans)')
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
-    parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 32)')
-    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 32)')
-    parser.add_argument('--model', type=str, default='resnetbase', help='model type (default: resnetbase)')
+    parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 32)')
+    parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 32)')
+    parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: rexnet_200base)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
-    parser.add_argument('--val_ratio', type=float, default=0.1, help='ratio for validaton (default: 0.1)')
+    parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.1)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
@@ -300,6 +277,11 @@ if __name__ == '__main__':
     parser.add_argument('--userdataset', default='dataset', help='select user custom dataset')
     parser.add_argument('--usermodel', default='model', help='select user custom model')
     parser.add_argument('--usertrans', default='trans', help='select user custom transform')
+    parser.add_argument('--earlystop', type=int, default=0, help='set earlystop count default 0 is No earlystop')
+    parser.add_argument('--fold',type=int, default = 0, help = 'number of k-folds')
+    parser.add_argument('--num_classes',type=int, default = 18, help = 'num_classes')
+
+    
 
 
     # Container environment
@@ -308,4 +290,95 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    train(args)
+
+    # Start
+    seed_everything(args.seed)
+
+    args.save_dir = increment_path(os.path.join(args.save_dir, args.name))
+
+    # -- logging
+    # logger = SummaryWriter(log_dir=save_dir)
+    try:
+        if not os.path.exists(args.save_dir):
+            os.makedirs(args.save_dir)
+        else:
+            raise Exception("already exist folder!")
+    except OSError:
+        print ('Error: Creating directory. ' +  args.save_dir)
+
+    with open(os.path.join(args.save_dir, 'config.json'), 'w', encoding='utf-8') as f:
+        json.dump(vars(args), f, ensure_ascii=False, indent=4)
+    
+    args.name = ""
+    
+    # -- settings
+    use_cuda = torch.cuda.is_available()
+
+    # -- augmentation
+    train_transform_module = getattr(import_module("trans." + args.usertrans), args.trainaug)  # default: BaseAugmentation
+    train_transform = train_transform_module(
+        resize=args.resize,
+    )
+    valid_transform_module = getattr(import_module("trans." + args.usertrans), args.validaug)  # default: BaseAugmentation
+    valid_transform = valid_transform_module(
+        resize=args.resize,
+    )
+    
+    if args.fold == 0:
+        # valid train mode
+        print('#'*100)
+        print(f'    valid train mode')
+        print('#'*100)
+
+        # -- dataset
+        dataset_module = getattr(import_module("datasets." + args.userdataset), args.traindataset)  # default: BaseAugmentation
+        train_dataset = dataset_module(
+            data_dir=args.data_dir,
+            mode='train',
+            transform = train_transform
+        )
+        valid_dataset = dataset_module(
+            data_dir=args.data_dir,
+            mode='train',
+            transform = valid_transform
+        )
+        total = len(train_dataset.df_csv)
+        val_share = int(total * args.val_ratio)
+        train_share = total - val_share
+
+        train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
+        valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
+
+        train(args, train_dataset, valid_dataset, train_transform, valid_transform)
+
+    else :
+        # k-fold train mode
+        print('#'*100)
+        print(f'    k-fold train mode')
+        print('#'*100)
+
+        # -- dataset
+        dataset_module = getattr(import_module("datasets." + args.userdataset), args.traindataset)  # default: BaseAugmentation
+        full_dataset = dataset_module(
+            data_dir=args.data_dir,
+            mode='train',
+            transform = train_transform
+        )
+
+        skf = StratifiedKFold(n_splits=args.fold, shuffle=True, random_state=args.seed)
+        for fold, (train_ids, valid_ids) in enumerate(skf.split(full_dataset.df_csv, full_dataset.df_csv.gender_age_cls)):
+            print('-'*50)
+            print(f'FOLD [{fold}]')
+            print('-'*50)
+
+            # -- Image index
+            train_image_ids = sum([[x*7+i for i in range(7)] for x in train_ids],[])
+            valid_image_ids = sum([[x*7+i for i in range(7)] for x in valid_ids],[])
+
+            # -- Dataset
+            train_dataset = Subset(full_dataset, train_image_ids)
+            valid_dataset = Subset(full_dataset, valid_image_ids)
+
+            args.name = f"[{fold}]_"
+            
+            train(args, train_dataset, valid_dataset, train_transform, valid_transform)
