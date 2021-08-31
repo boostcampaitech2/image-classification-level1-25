@@ -4,7 +4,7 @@ __pycache__/
 etc/
 base_code/
 save/**/2021*
-save/exp*
+save/MM*
 mission/
 wandb/
 
