@@ -18,7 +18,7 @@ class A_trans_train:
         self.std = std
         self.transform = A.Compose([
                                     A.CenterCrop(height=384, width=384),
-                                    A.RandomCrop(width=300, height=300, p=0.5),
+                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
                                     A.Resize(width=resize[0], height=resize[1]),
                                     A.Normalize(mean=self.mean, std=self.std),
                                     Ap.ToTensorV2(),
