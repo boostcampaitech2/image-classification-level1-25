@@ -157,7 +157,7 @@ def train(data_dir, model_dir, args):
         valid_loader = DataLoader(
             valid_dataset,
             batch_size=args.valid_batch_size,
-            shuffle=True,
+            shuffle=False,
             drop_last=True
         )
         print(f'valid length : {len(valid_loader)}')
@@ -280,7 +280,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 64)')
     parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 1000)')
     parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: resnetbase)')
-    parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer type (default: SGD)')
+    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
