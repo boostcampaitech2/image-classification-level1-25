@@ -21,6 +21,7 @@ from torch.utils.data import Subset
 from datasets.dataset import MaskBaseDataset
 from module.loss import create_criterion
 from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split
 
 
 def seed_everything(seed):
@@ -347,11 +348,14 @@ if __name__ == '__main__':
         )
         total = len(train_dataset.df_csv)
         val_share = int(total * args.val_ratio)
-        train_share = total - val_share
 
-        # 정확도 낮게 나오면 섞이는지 확인해야될듯?
-        train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
-        valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
+        train_df, valid_df = train_test_split(train_dataset.df_csv, test_size=val_share, stratify=train_dataset.df_csv.gender_age_cls, random_state=args.seed)
+
+        train_df.reset_index(drop=True, inplace=True)
+        valid_df.reset_index(drop=True, inplace=True)
+
+        train_dataset.df_csv = train_df
+        valid_dataset.df_csv = valid_df
 
         train(args, train_dataset, valid_dataset, train_transform, valid_transform)
 
@@ -374,7 +378,6 @@ if __name__ == '__main__':
             print('-'*50)
             print(f'FOLD [{fold}]')
             print('-'*50)
-            if fold < 4 : continue
 
             # -- Image index
             train_image_ids = sum([[x*7+i for i in range(7)] for x in train_ids],[])
