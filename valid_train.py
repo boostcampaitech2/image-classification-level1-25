@@ -13,11 +13,12 @@ import numpy as np
 import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
-from tqdm.auto import tqdm
-from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
+# from torch.utils.tensorboard import SummaryWriter
 
 from datasets.dataset import MaskBaseDataset
 from module.loss import create_criterion
+from sklearn.metrics import f1_score
 
 
 def seed_everything(seed):
@@ -123,8 +124,8 @@ def train(args):
     train_loader = DataLoader(
         train_dataset,
         batch_size=args.batch_size,
-        # num_workers=multiprocessing.cpu_count()//2,
-        num_workers=0,
+        num_workers=multiprocessing.cpu_count()//2,
+        # num_workers=0,
         shuffle=True,
         pin_memory=use_cuda,
         drop_last=True,
@@ -133,8 +134,8 @@ def train(args):
     val_loader = DataLoader(
         valid_dataset,
         batch_size=args.valid_batch_size,
-        # num_workers=multiprocessing.cpu_count()//2,
-        num_workers=0,
+        num_workers=multiprocessing.cpu_count()//2,
+        # num_workers=0,
         shuffle=False,
         pin_memory=use_cuda,
         drop_last=True,
@@ -145,7 +146,7 @@ def train(args):
     model = model_module(
         num_classes=num_classes
     ).to(device)
-    model = torch.nn.DataParallel(model)
+    # model = torch.nn.DataParallel(model)
 
     # -- loss & metric
     criterion = create_criterion(args.criterion)  # default: cross_entropy
@@ -158,17 +159,25 @@ def train(args):
     scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
 
     # -- logging
-    logger = SummaryWriter(log_dir=save_dir)
+    # logger = SummaryWriter(log_dir=save_dir)
+    try:
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+    except OSError:
+        print ('Error: Creating directory. ' +  save_dir)
+
     with open(os.path.join(save_dir, 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
 
     best_val_acc = 0
     best_val_loss = np.inf
+    best_val_f1 = 0
     for epoch in range(args.epochs):
         # train loop
         model.train()
         loss_value = 0
         matches = 0
+        f1_sum = 0
         print(f"Epoch[{epoch}/{args.epochs}]")
         for idx, train_batch in enumerate(pbar := tqdm(train_loader, ncols=100)):
             inputs, labels = train_batch
@@ -186,20 +195,22 @@ def train(args):
 
             loss_value += loss.item()
             matches += (preds == labels).sum().item()
+            f1_sum += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
             if (idx + 1) % args.log_interval == 0:
-                train_loss = loss_value / args.log_interval
-                train_acc = matches / args.batch_size / args.log_interval
+                train_loss = loss_value / (idx+1)
+                train_acc = matches / args.batch_size / (idx+1)
+                train_f1 = f1_sum / (idx+1)
                 current_lr = get_lr(optimizer)
-                pbar.set_description(f"loss_{train_loss:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
+                pbar.set_description(f"loss_{train_loss:4.4}, f1_{train_f1:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
                 # print(
                 #     f"Epoch[{epoch}/{args.epochs}]({idx + 1}/{len(train_loader)}) || "
                 #     f"training loss {train_loss:4.4} || training accuracy {train_acc:4.2%} || lr {current_lr}"
                 # )
-                logger.add_scalar("Train/loss", train_loss, epoch * len(train_loader) + idx)
-                logger.add_scalar("Train/accuracy", train_acc, epoch * len(train_loader) + idx)
-
-                loss_value = 0
-                matches = 0
+                # logger.add_scalar("Train/loss", train_loss, epoch * len(train_loader) + idx)
+                # logger.add_scalar("Train/accuracy", train_acc, epoch * len(train_loader) + idx)
+                
+                # loss_value = 0
+                # matches = 0
 
         scheduler.step()
 
@@ -209,7 +220,8 @@ def train(args):
             model.eval()
             val_loss_items = []
             val_acc_items = []
-            figure = None
+            val_f1_items = []
+            # figure = None
             for val_batch in tqdm(val_loader, ncols=100):
                 inputs, labels = val_batch
                 inputs = inputs.to(device)
@@ -220,8 +232,11 @@ def train(args):
 
                 loss_item = criterion(outs, labels).item()
                 acc_item = (labels == preds).sum().item()
+                f1 = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item)
+                val_f1_items.append(f1)
+                
 
                 # 한번씩 여기서 미친듯이 렉먹는듯
                 # if figure is None:
@@ -233,21 +248,26 @@ def train(args):
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
             val_acc = np.sum(val_acc_items) / len(valid_dataset)
+            val_f1 = np.sum(val_f1_items) / len(val_loader)
             if val_acc > best_val_acc:
             #     print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
             #     torch.save(model.state_dict(), f"{save_dir}/best.pth")
                 best_val_acc = val_acc
             if val_loss < best_val_loss:
-                print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{save_dir}/best.pth")
+                # print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+                # torch.save(model.state_dict(), f"{save_dir}/best.pth")
                 best_val_loss = val_loss
+            if val_f1 > best_val_f1:
+                print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
+                torch.save(model.state_dict(), f"{save_dir}/best.pth")
+                best_val_f1 = val_f1
             torch.save(model.state_dict(), f"{save_dir}/last.pth")
             print(
-                f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
-                f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
+                f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2}, f1: {val_f1:4.2} || "
+                f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} best F1: {best_val_f1:4.2}"
             )
-            logger.add_scalar("Val/loss", val_loss, epoch)
-            logger.add_scalar("Val/accuracy", val_acc, epoch)
+            # logger.add_scalar("Val/loss", val_loss, epoch)
+            # logger.add_scalar("Val/accuracy", val_acc, epoch)
             # logger.add_figure("results", figure, epoch)
             print()
 
@@ -260,16 +280,16 @@ if __name__ == '__main__':
     # load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
-    parser.add_argument('--seed', type=int, default=42, help='random seed (default: 42)')
+    parser.add_argument('--seed', type=int, default=25, help='random seed (default: 25)')
     parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 1)')
     parser.add_argument('--traindataset', type=str, default='basicDatasetA', help='train dataset augmentation type (default: basicDatasetA)')
-    parser.add_argument('--validdataset', type=str, default='basicDatasetA', help='validation dataset augmentation type (default: basicDatasetA)')
+    # parser.add_argument('--validdataset', type=str, default='basicDatasetA', help='validation dataset augmentation type (default: basicDatasetA)')
     parser.add_argument('--trainaug', type=str, default='A_simple_trans', help='train data augmentation type (default: A_simple_trans)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='validation data augmentation type (default: A_centercrop_trans)')
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
-    parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 32)')
-    parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 32)')
-    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
+    parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 32)')
+    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 32)')
+    parser.add_argument('--model', type=str, default='resnetbase', help='model type (default: resnetbase)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.1, help='ratio for validaton (default: 0.1)')

@@ -255,7 +255,7 @@ class SplitLabelsDatasetA(Dataset):
         self.transform = transform
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
         df_origin['gender'] = df_origin['gender'].map({'male':0, 'female':1})
-        # df_origin = df_origin.sample(frac=1).reset_index(drop=True)
+        df_origin = df_origin.sample(frac=1).reset_index(drop=True)
 
         train_share = 0.9
         total = len(df_origin)
