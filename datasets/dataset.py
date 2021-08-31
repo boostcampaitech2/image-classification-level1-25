@@ -281,9 +281,9 @@ class TestDataset(Dataset):
         return len(self.img_paths)
 
 class TestDatasetA(Dataset):
-    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transfrom = None):
+    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transform = None):
         self.img_paths = img_paths
-        self.transform = transfrom
+        self.transform = transform
 
     def __getitem__(self, index):
         image = Image.open(self.img_paths[index])
