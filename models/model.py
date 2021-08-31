@@ -70,10 +70,6 @@ class resnetbase(nn.Module):
         x = self.superM(x)
         return x
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 class rexnet_200base(nn.Module):
     def __init__(self, num_classes: int = 1000):
         super().__init__()
@@ -90,11 +86,6 @@ class rexnet_200base(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.superM(x)
         return x
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> master
     
 class MultiModelMergeModel(nn.Module):
     def __init__(self, modelMASK, modelAGE, modelGENDER,
@@ -122,8 +113,6 @@ class MultiModelMergeModel(nn.Module):
             MERGED = torch.cat((MASK, AGE, GENDER), dim=1)
         MERGED = self.classifier(nn.functional.relu(MERGED))
         return MERGED
-<<<<<<< HEAD
-=======
 
 
 class ensemble(nn.Module):
@@ -140,4 +129,3 @@ class ensemble(nn.Module):
         result = torch.stack(result, dim=0)
         return torch.sum(result, dim=0)
     
->>>>>>> master
