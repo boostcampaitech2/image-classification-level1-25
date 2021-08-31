@@ -21,7 +21,7 @@ def load_model(saved_model, filename, modelname, num_classes, device):
         model_path = os.path.join(saved_model, data[0])
         model.load_state_dict(torch.load(model_path, map_location=device))
     else :
-        model_cls = getattr(import_module("models.model"), 'mother')
+        model_cls = getattr(import_module("models.model"), 'ensemble')
         model = model_cls(
             modelname = modelname,
             length = len(data),

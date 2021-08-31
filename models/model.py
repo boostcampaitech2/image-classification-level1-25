@@ -117,7 +117,7 @@ class MultiModelMergeModel(nn.Module):
         return MERGED
 
 
-class mother(nn.Module):
+class ensemble(nn.Module):
     def __init__(self, modelname: str, length: int, device, num_classes: int = 1000):
         super().__init__()
         self.superM = []
