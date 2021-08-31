@@ -96,7 +96,7 @@ def inference(args):
             )
 
         draw_result_chart_wandb(total_preds, 'predicts')
-        draw_result_chart_wandb(total_preds, 'y_labels')
+        draw_result_chart_wandb(total_labels, 'y_labels')
         log_wandb('team_eval', val_acc, val_f1, False)
     print(f'Team eval Done!')
 
