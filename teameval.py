@@ -1,4 +1,5 @@
 import argparse
+from module.wandb import draw_result_chart_wandb, init_wandb, log_wandb, login_wandb, show_images_wandb
 import os
 from importlib import import_module
 
@@ -68,6 +69,9 @@ def inference(args):
     print("Calculating inference results..")
     val_acc_items = []
     val_f1_items = []
+    total_preds = []
+    total_labels = []
+    init_wandb('team_eval', args)
     with torch.no_grad():
         for idx, train_batch in enumerate(loader):
             inputs, labels = train_batch
@@ -79,8 +83,11 @@ def inference(args):
 
             acc_item = (labels == preds).sum().item()
             f1 = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
+            total_preds.extend(preds.cpu().numpy())
+            total_labels.extend(labels.data.cpu().numpy())
             val_acc_items.append(acc_item)
             val_f1_items.append(f1)
+            show_images_wandb(inputs, labels, preds.cpu().numpy())
     
         val_acc = np.sum(val_acc_items) / len(dataset)
         val_f1 = np.sum(val_f1_items) / len(loader)
@@ -88,6 +95,9 @@ def inference(args):
                 f"[Eval] acc : {val_acc:4.2%}, f1: {val_f1:5.4}"
             )
 
+        draw_result_chart_wandb(total_preds, 'predicts')
+        draw_result_chart_wandb(total_preds, 'y_labels')
+        log_wandb('team_eval', val_acc, val_f1, False)
     print(f'Team eval Done!')
 
 
@@ -106,7 +116,15 @@ if __name__ == '__main__':
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/train/'))
     parser.add_argument('--save_dir', type=str, default=os.environ.get('SM_CHANNEL_SAVE', './save'))
 
+
+    # Wandb
+    parser.add_argument('--dotenv_path', default='/opt/ml/image-classification-level1-25/wandb.env', help='input your dotenv path')
+    parser.add_argument('--wandb_entity', default='boostcamp-25', help='input your wandb entity')
+    parser.add_argument('--wandb_project', default='image-classification-level1-25', help='input your wandb project')
+    parser.add_argument('--wandb_unique_tag', default='tag_name', help='input your wandb unique tag')
+
     args = parser.parse_args()
+    login_wandb(args.dotenv_path)
 
     inference(args)
 
