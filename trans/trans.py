@@ -80,7 +80,7 @@ class A_centercrop_trans:
         self.mean = mean
         self.std = std
         self.transform = A.Compose([
-                                    A.CenterCrop(height=384, width=384),
+                                    A.CenterCrop(height=300, width=300),
                                     A.Resize(width=resize[0], height=resize[1]),
                                     A.Normalize(mean=self.mean, std=self.std),
                                     Ap.ToTensorV2(),
