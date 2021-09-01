@@ -160,7 +160,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             loss_value += loss.item()
             matches += (preds == labels).sum().item()
             f1_sum += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
-            if (idx + 1) % args.log_interval == 0 or idx + 1 == len(train_loader):
+            if ((idx + 1) % args.log_interval == 0) or ((idx + 1) == len(train_loader)):
                 train_loss = loss_value / (idx+1)
                 train_acc = matches / args.batch_size / (idx+1)
                 train_f1 = f1_sum / (idx+1)

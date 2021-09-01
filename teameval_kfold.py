@@ -288,53 +288,10 @@ def train(data_dir, model_dir, args):
                 break
             print('{} Acc: {:.4f} f1-score: {:.4f}\n'.format('valid', valid_acc, valid_f1))
 
-<<<<<<< HEAD:kfold_train.py
-        # team_eval_pred
-        all_predictions = []
-        answers = []
-        for images, labels in tqdm(team_eval_loader):
-            with torch.no_grad():
-                images = images.to(device)
-                labels = labels.to(device)
-                outputs = model(images)
-                all_predictions.extend(outputs.cpu().numpy())
-                answers.extend(labels.cpu().numpy())
-        team_eval_preds = [x+y for x,y in zip(team_eval_preds,all_predictions)]
-        team_eval_acc = np.round(torch.sum(torch.tensor(answers) == torch.tensor(np.argmax(team_eval_preds,axis=1)))/len(answers),4)
-        team_eval_f1 = np.round(f1_score(answers,np.argmax(team_eval_preds,axis=1),average="macro"),4)
-        log_wandb('team_eval', team_eval_acc, team_eval_f1)
-        draw_result_chart_wandb(np.argmax(team_eval_preds,axis=1))
-        show_images_wandb(images,labels,np.argmax(outputs.cpu().data.numpy(),axis=1))
-
-        # test_pred
-        all_predictions = []
-        for images in tqdm(test_loader):
-            with torch.no_grad():
-                images = images.to(device)
-                outputs = model(images)
-                all_predictions.extend(outputs.cpu().numpy())
-
-        test_preds = [x+y for x,y in zip(test_preds,all_predictions)]
-
-    # Check Result
-    print(f'Team eval accuracy : {team_eval_acc}, f1-score : {team_eval_f1}')
-    submission['ans'] = np.argmax(test_preds,axis = 1)
-    submission.to_csv('stratified.csv', index=False)
-    print('Done')
-
-=======
->>>>>>> master:teameval_kfold.py
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-<<<<<<< HEAD:kfold_train.py
-    # from dotenv import load_dotenv
-    import os
-    # load_dotenv(verbose=True)
-
-=======
->>>>>>> origin/master:teameval_kfold.py
     # Data and model checkpoints directories
     parser.add_argument('--seed', type=int, default=25, help='random seed (default: 25)')
     parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 1)')
