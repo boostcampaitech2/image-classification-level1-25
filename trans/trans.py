@@ -139,4 +139,3 @@ class A_random_trans:
 
     def __call__(self, image):
         return self.transform(image=image)
-        

@@ -22,7 +22,7 @@ from torch.utils.data import Subset
 from datasets.dataset import MaskBaseDataset
 from module.loss import create_criterion
 from sklearn.metrics import f1_score
-
+from sklearn.model_selection import train_test_split
 
 def seed_everything(seed):
     torch.manual_seed(seed)
@@ -220,20 +220,20 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
 
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
-                print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                stop_cnt = 0
+                # print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # stop_cnt = 0
                 best_val_loss = val_loss
                 
             if val_f1 > best_val_f1:
-                # print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
+                print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                # stop_cnt = 0
+                stop_cnt = 0
                 best_val_f1 = val_f1
                 
             torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_last.pth")
@@ -359,10 +359,14 @@ if __name__ == '__main__':
         )
         total = len(train_dataset.df_csv)
         val_share = int(total * args.val_ratio)
-        train_share = total - val_share
 
-        train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
-        valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
+        train_df, valid_df = train_test_split(train_dataset.df_csv, test_size=val_share, stratify=train_dataset.df_csv.gender_age_cls, random_state=args.seed)
+
+        train_df.reset_index(drop=True, inplace=True)
+        valid_df.reset_index(drop=True, inplace=True)
+
+        train_dataset.df_csv = train_df
+        valid_dataset.df_csv = valid_df
 
         init_wandb('train', args)
         train(args, train_dataset, valid_dataset, train_transform, valid_transform)
