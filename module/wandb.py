@@ -28,7 +28,7 @@ def init_wandb(phase, args, **kwargs):
         for k,v in kwargs.items():
             tags.append(f'{k}: {v}')
             name += f' {v}{k} '
-    wandb.init(tags=tags, entity=args.wandb_entity, project=args.wandb_project)
+    wandb.init(tags=tags, entity=args.wandb_entity, project=args.wandb_project, reinit=True)
     wandb.run.name = name
     wandb.config.update(args)
     wandb.config.update({"PHASE": phase})
