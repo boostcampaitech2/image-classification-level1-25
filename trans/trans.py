@@ -139,3 +139,51 @@ class A_random_trans:
 
     def __call__(self, image):
         return self.transform(image=image)
+
+class regnet_trans1:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=384, width=384),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.ShiftScaleRotate(p=0.7),
+                                    A.Normalize(mean=self.mean, std=self.std),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
+class regnet_trans2:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=384, width=384),
+                                    A.RandomCrop(width=300, height=300),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.HorizontalFlip(p=0.5),
+                                    A.ShiftScaleRotate(p=0.7),
+                                    A.Normalize(mean=self.mean, std=self.std),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
+class regnet_trans3:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=384, width=384),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.HorizontalFlip(p=0.5),
+                                    A.ShiftScaleRotate(p=0.7),
+                                    A.Normalize(mean=self.mean, std=self.std),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
