@@ -126,7 +126,7 @@ class My_trans4 :
         self.transform = A.Compose([
             A.CenterCrop(height=300, width=250),
             A.RandomBrightnessContrast(p=0.3),
-            A.coarsedropout(
+            A.CoarseDropout(
                 max_holes=8, max_height=8, max_width=8,
                 min_holes=None, min_height=None, min_width=None,
                 fill_value=0, mask_fill_value=None, always_apply=False, p=0.5),
