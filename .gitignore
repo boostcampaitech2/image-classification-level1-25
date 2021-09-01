@@ -20,3 +20,5 @@ team_wandb_trainer.ipynb
 =======
 >>>>>>> Stashed changes
 teamtrain.csv
+sweep_dh.yaml
+sweep_trans.yaml

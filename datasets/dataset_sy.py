@@ -1,24 +1,27 @@
 import os
 import numpy as np
+import pandas as pd
 from PIL import Image
 from torch.utils.data import Dataset
 
-class MaskDataset_new_img(Dataset):
-    def __init__(self, data_path, train = 'ALL', transform = None):
+class basicDatasetA_new_img(Dataset):
+    def __init__(self, data_path, mode = 'ALL', transform = None):
         self.main_path = data_path
         self.transform = transform
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
         df_origin['gender'] = df_origin['gender'].map({'male':0, 'female':1})
+        df_origin = df_origin.sample(frac=1).reset_index(drop=True)
 
+        train_share = 0.9
         total = len(df_origin)
-        if train == 'ALL':
+        if mode == 'ALL':
             self.df_csv = df_origin
-        elif train == 'train' :
-            self.df_csv = df_origin.head(int(total*0.8)) 
-        elif train == 'test' :
-            self.df_csv = df_origin.tail(total-int(total*0.8))
+        elif mode == 'train' :
+            self.df_csv = df_origin.head(int(total*train_share)) 
+        elif mode == 'test' :
+            self.df_csv = df_origin.tail(total-int(total*train_share))
         else :
-            raise Exception(f'train error {train} not in [''ALL'', ''train'', ''test'']')
+            raise Exception(f'train error {mode} not in [''ALL'', ''train'', ''test'']')
         
 
     def __getitem__(self, index):
@@ -30,7 +33,7 @@ class MaskDataset_new_img(Dataset):
         image = Image.open(os.path.join(file_path, files[sub_index]))
 
         if self.transform:
-            image = self.transform(image)
+            image = self.transform(image=np.array(image))['image'].float()
 
         y = 0
 

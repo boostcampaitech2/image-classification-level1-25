@@ -1,43 +1,56 @@
-from albumentations import *
-from albumentations.pytorch import ToTensorV2
+import numpy as np
+import torch
+from PIL import Image
+from torchvision import transforms
+from torchvision.transforms import *
+import albumentations as A
+import albumentations.pytorch as Ap
+import torchvision.transforms.functional as F
 
+IMG_EXTENSIONS = [
+    ".jpg", ".JPG", ".jpeg", ".JPEG", ".png",
+    ".PNG", ".ppm", ".PPM", ".bmp", ".BMP",
+]
 
-def get_transforms(need=('train', 'val'), img_size=(512, 384), mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246)):
-    transformations = {}
-    if 'train' in need:
-        transformations['train'] = Compose([
-            Resize(img_size[0], img_size[1], p=1.0),
-            HorizontalFlip(p=0.5),
-            ShiftScaleRotate(p=0.5),
-            HueSaturationValue(hue_shift_limit=0.2, sat_shift_limit=0.2, val_shift_limit=0.2, p=0.5),
-            RandomBrightnessContrast(brightness_limit=(-0.1, 0.1), contrast_limit=(-0.1, 0.1), p=0.5),
-            GaussNoise(p=0.5),
-            Normalize(mean=mean, std=std, max_pixel_value=255.0, p=1.0),
-            ToTensorV2(p=1.0),
-        ], p=1.0)
+class A_trans_train:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=384, width=384),
+                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.Normalize(mean=self.mean, std=self.std),
+                                    Ap.ToTensorV2(),
+                                ])
 
-    if 'val' in need:
-        transformations['val'] = Compose([
-            Resize(img_size[0], img_size[1]),
-            Normalize(mean=mean, std=std, max_pixel_value=255.0, p=1.0),
-            ToTensorV2(p=1.0),
-        ], p=1.0)
-        
-def basic_train_trans(img_size=(512, 384), mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246)):
-    return Compose([
-            Resize(img_size[0], img_size[1], p=1.0),
-            HorizontalFlip(p=0.5),
-            ShiftScaleRotate(p=0.5),
-            HueSaturationValue(hue_shift_limit=0.2, sat_shift_limit=0.2, val_shift_limit=0.2, p=0.5),
-            RandomBrightnessContrast(brightness_limit=(-0.1, 0.1), contrast_limit=(-0.1, 0.1), p=0.5),
-            GaussNoise(p=0.5),
-            Normalize(mean=mean, std=std, max_pixel_value=255.0, p=1.0),
-            ToTensorV2(p=1.0),
-        ], p=1.0)
+    def __call__(self, image):
+        return self.transform(image=image)
 
-def basic_test_trans(img_size=(512, 384), mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246)):
-    return Compose([
-            Resize(img_size[0], img_size[1]),
-            Normalize(mean=mean, std=std, max_pixel_value=255.0, p=1.0),
-            ToTensorV2(p=1.0),
-        ], p=1.0)
+class A_trans_val:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=384, width=384),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.Normalize(mean=self.mean, std=self.std),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
+class trans_crop:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = transforms.Compose([
+            transforms.Resize(resize, Image.BILINEAR),
+            transforms.Normalize(mean=mean, std=std),
+            transforms.ToTensor(),
+        ])
+
+    def __call__(self, image):
+        image = F.crop(img=transforms.ToPILImage()(image),top=50,left=80,height=320,width=220)
+        return self.transform(image)
