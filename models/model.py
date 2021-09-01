@@ -154,4 +154,20 @@ class ensemble(nn.Module):
             result.append(s(M(x))) 
         result = torch.stack(result, dim=0)
         return torch.sum(result, dim=0)
+
+class regnety_032(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "regnety_032", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
     
+        # self.superM.fc = torch.nn.Linear(in_features=512, out_features=num_classes, bias=True)
+        # torch.nn.init.xavier_uniform_(self.superM.fc.weight)
+        # stdv = 1/np.sqrt(512)
+        # self.superM.fc.bias.data.uniform_(-stdv, stdv)
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x
