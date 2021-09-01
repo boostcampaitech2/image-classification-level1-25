@@ -257,9 +257,9 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    # from dotenv import load_dotenv
+    from dotenv import load_dotenv
     import os
-    # load_dotenv(verbose=True)
+    load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
     parser.add_argument('--name', default='exp', help='model save at {SM_SAVE_DIR}/{name}')
