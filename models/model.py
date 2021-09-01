@@ -114,15 +114,15 @@ class regnety_032(nn.Module):
 
     
 class MultiModelMergeModel(nn.Module):
-    def __init__(self, modelMASK, modelAGE, modelGENDER,
+    def __init__(self, modelMASK, modelGENDER, modelAGE,
                     concatclasses : int = 8 , num_classes: int = 18,
                     prev_model_frz=True ):
         super().__init__()
         self.prev_model_frz = prev_model_frz
 
         self.modelMASK = modelMASK
-        self.modelAGE = modelAGE
         self.modelGENDER = modelGENDER
+        self.modelAGE = modelAGE
         self.classifier = nn.Sequential(
             nn.Linear(concatclasses, 32),
             nn.ReLU(inplace=True),
@@ -131,12 +131,12 @@ class MultiModelMergeModel(nn.Module):
         
     def forward(self, IMAGE):
         MASK = self.modelMASK(IMAGE)
-        AGE = self.modelAGE(IMAGE)
         GENDER = self.modelGENDER(IMAGE)
+        AGE = self.modelAGE(IMAGE)
         if self.prev_model_frz :
-            MERGED = torch.cat((MASK.detach(), AGE.detach(), GENDER.detach()), dim=1)
+            MERGED = torch.cat((MASK.detach(), GENDER.detach(), AGE.detach()), dim=1)
         else :
-            MERGED = torch.cat((MASK, AGE, GENDER), dim=1)
+            MERGED = torch.cat((MASK, GENDER, AGE), dim=1)
         MERGED = self.classifier(nn.functional.relu(MERGED))
         return MERGED
 
