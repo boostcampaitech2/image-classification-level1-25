@@ -1,6 +1,7 @@
 import argparse
 import glob
 import json
+from module.wandb import init_wandb, log_wandb, login_wandb
 import multiprocessing
 import os
 import random
@@ -158,7 +159,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             loss_value += loss.item()
             matches += (preds == labels).sum().item()
             f1_sum += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
-            if (idx + 1) % args.log_interval == 0:
+            if (idx + 1) % args.log_interval == 0 or idx + 1 == len(train_loader):
                 train_loss = loss_value / (idx+1)
                 train_acc = matches / args.batch_size / (idx+1)
                 train_f1 = f1_sum / (idx+1)
@@ -173,9 +174,10 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
                 
                 # loss_value = 0
                 # matches = 0
-
+        else:
+            log_wandb('train',train_acc, train_f1, train_loss, False)
         scheduler.step()
-
+        
         # val loop
         with torch.no_grad():
             print("Calculating validation results...")
@@ -214,6 +216,8 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             val_loss = np.sum(val_loss_items) / len(valid_loader)
             val_acc = np.sum(val_acc_items) / len(valid_dataset)
             val_f1 = np.sum(val_f1_items) / len(valid_loader)
+            log_wandb('valid', val_acc, val_f1, val_loss, False)
+
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
@@ -290,6 +294,14 @@ if __name__ == '__main__':
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/'))
     parser.add_argument('--save_dir', type=str, default=os.environ.get('SM_SAVE_DIR', './save'))
 
+
+    # Wandb
+    parser.add_argument('--dotenv_path', default='/opt/ml/image-classification-level1-25/wandb.env', help='input your dotenv path')
+    parser.add_argument('--wandb_entity', default='boostcamp-25', help='input your wandb entity')
+    parser.add_argument('--wandb_project', default='image-classification-level1-25', help='input your wandb project')
+    parser.add_argument('--wandb_unique_tag', default='tag_name', help='input your wandb unique tag')
+
+
     args = parser.parse_args()
 
 
@@ -297,6 +309,7 @@ if __name__ == '__main__':
     seed_everything(args.seed)
 
     args.save_dir = increment_path(os.path.join(args.save_dir, args.name))
+    login_wandb(args.dotenv_path)
 
     # -- logging
     # logger = SummaryWriter(log_dir=save_dir)
@@ -351,6 +364,7 @@ if __name__ == '__main__':
         train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
         valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
 
+        init_wandb('train', args)
         train(args, train_dataset, valid_dataset, train_transform, valid_transform)
 
     else :
@@ -382,6 +396,7 @@ if __name__ == '__main__':
             valid_dataset = Subset(full_dataset, valid_image_ids)
 
             args.fold_idx = fold
+            init_wandb('train', args, fold=fold)
             
             train(args, train_dataset, valid_dataset, train_transform, valid_transform)
 
