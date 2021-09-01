@@ -16,3 +16,4 @@ origin_trainer_single_test.ipynb
 wandb.env
 team_wandb_trainer.ipynb
 teamtrain.csv
+sweep_dh.yaml
