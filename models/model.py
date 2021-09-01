@@ -87,6 +87,31 @@ class rexnet_200base(nn.Module):
         x = self.superM(x)
         return x
 
+class efficientnet_b2_pruned(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "efficientnet_b2_pruned", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
+            
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x 
+
+class regnety_032(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "regnety_032", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
+            
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x        
+
+
     
 class MultiModelMergeModel(nn.Module):
     def __init__(self, modelMASK, modelAGE, modelGENDER,
