@@ -348,7 +348,7 @@ class efficientnetb2_trans1 :
         self.transform = A.Compose([
             A.CenterCrop(height=384, width=384),
             A.Resize(width=resize[0], height=resize[1]),
-            A.ShiftScaleRotate(p=0.7),
+            A.GaussNoise(var_limit=(400, 600), p=0.1),
             A.Normalize(mean=self.mean, std=self.std),
             Ap.ToTensorV2(),
         ])
@@ -363,7 +363,7 @@ class efficientnetb2_trans2 :
             A.CenterCrop(height=384, width=384),
             A.Resize(width=resize[0], height=resize[1]),
             A.HorizontalFlip(p=0.5),
-             A.GaussNoise(var_limit=(400, 600), p=0.1),
+            A.GaussNoise(var_limit=(400, 600), p=0.1),
             A.Normalize(mean=self.mean, std=self.std),
             Ap.ToTensorV2(),
         ])
