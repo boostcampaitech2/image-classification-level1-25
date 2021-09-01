@@ -145,37 +145,35 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             inputs = inputs.to(device)
             labels = labels.to(device)
 
+            if args.cutmix == 'True':
+                #cutmix
+                lam = np.random.beta(0.5, 0.5)
+                rand_index = torch.randperm(inputs.size()[0]).to(device)
+                target_a = labels
+                target_b = labels[rand_index]   
+        
+                W = inputs.size()[2]
+                H = inputs.size()[3]
+                cut_rat = np.sqrt(1-lam)
+                cut_h = np.int(H*cut_rat)
+                cy = np.random.randint(H)
+                bbx1 = 0
+                bby1 = np.clip(cy-cut_h//2,0,H)
+                bbx2 = W
+                bby2 = np.clip(cy+cut_h//2,0,H)
+
+                inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
+                # adjust lambda to exactly match pixel ratio
+                lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
+                # compute output
+                outs = model(inputs)
+                loss = criterion(outs, target_a) * lam + criterion(outs, target_b) * (1. - lam)  
+            else:
+                outs = model(inputs)
+                loss = criterion(outs, labels)
+            
+            preds = torch.argmax(outs, dim=-1)
             optimizer.zero_grad()
-            '''
-            outs = model(inputs)
-            preds = torch.argmax(outs, dim=-1)
-            loss = criterion(outs, labels)
-            '''
-            #cutmix
-            lam = np.random.beta(0.5, 0.5)
-            rand_index = torch.randperm(inputs.size()[0]).to(device)
-            target_a = labels
-            target_b = labels[rand_index]   
-    
-            W = inputs.size()[2]
-            H = inputs.size()[3]
-            cut_rat = np.sqrt(1-lam)
-            cut_h = np.int(H*cut_rat)
-            cy = np.random.randint(H)
-            bbx1 = 0
-            bby1 = np.clip(cy-cut_h//2,0,H)
-            bbx2 = W
-            bby2 = np.clip(cy+cut_h//2,0,H)
-
-            inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
-            # adjust lambda to exactly match pixel ratio
-            lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
-            # compute output
-            outs = model(inputs)
-            loss = criterion(outs, target_a) * lam + criterion(outs, target_b) * (1. - lam)  
-    
-            preds = torch.argmax(outs, dim=-1)
-
             loss.backward()
             optimizer.step()
 
@@ -306,6 +304,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_classes',type=int, default = 18, help = 'num_classes')
     # parser.add_argument('--load_state',type=str, default = '', help = 'load_state dir')
     parser.add_argument('--mode',type=str, default = 'train', help = 'train mode')
+    parser.add_argument('--cutmix',type=str, default = 'True', help = 'use cutmix')
 
     
 
