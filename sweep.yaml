@@ -4,7 +4,7 @@ project: image-classification-level1-25
 method: bayes
 metric:
   name: valid_f1_score
-  goal: maxmize
+  goal: maximize
 parameters:
   lr:
     values: [0.001,0.005]
