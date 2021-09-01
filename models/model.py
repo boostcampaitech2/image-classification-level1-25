@@ -123,9 +123,10 @@ class ensemble(nn.Module):
             self.superM.append(globals()[modelname](num_classes=num_classes).to(device))
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        s = torch.nn.Softmax(dim=1)
         result = []
         for idx, M in enumerate(self.superM):
-            result.append(M(x)) 
+            result.append(s(M(x))) 
         result = torch.stack(result, dim=0)
         return torch.sum(result, dim=0)
     
