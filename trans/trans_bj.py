@@ -74,13 +74,41 @@ class A_resize_trans:
     def __call__(self, image):
         return self.transform(image=image)
 
+class My_trans_train :
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+            A.CenterCrop(height=384, width=384),
+            A.Resize(width=resize[0], height=resize[1]),
+            A.GridDropout(),
+            A.Normalize(mean=self.mean, std=self.std),
+            Ap.ToTensorV2(),
+        ])
+    def __call__(self, image):
+        return self.transform(image=image)
+
+class My_trans_valid:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=384, width=384),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.Normalize(mean=self.mean, std=self.std),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
 
 class A_centercrop_trans:
     def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
         self.mean = mean
         self.std = std
         self.transform = A.Compose([
-                                    A.CenterCrop(height=300, width=300),
+                                    A.CenterCrop(height=384, width=384),
                                     A.Resize(width=resize[0], height=resize[1]),
                                     A.Normalize(mean=self.mean, std=self.std),
                                     Ap.ToTensorV2(),

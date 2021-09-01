@@ -46,12 +46,8 @@ def inference(args):
     device = torch.device("cuda" if use_cuda else "cpu")
 
     num_classes = MaskBaseDataset.num_classes  # 18
-<<<<<<< HEAD
-    model = load_model(args.save_dir, args.filename, num_classes, device).to(device)
-=======
     model = load_model(args.save_dir, args.filename, args.model, num_classes, device).to(device)
 
->>>>>>> master
     model.eval()
 
     img_root = os.path.join(args.data_dir, 'images')
@@ -65,11 +61,7 @@ def inference(args):
         resize=args.resize,
     )
 
-<<<<<<< HEAD
-    dataset = TestDatasetA(img_paths, args.resize, transfrom=valid_transform)
-=======
     dataset = TestDatasetA(img_paths, args.resize, transform=valid_transform)
->>>>>>> master
     loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=args.batch_size,
@@ -97,13 +89,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Data and model checkpoints directories
-<<<<<<< HEAD
-    parser.add_argument('--batch_size', type=int, default=128, help='input batch size for validing (default: 1000)')
-    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
-=======
     parser.add_argument('--batch_size', type=int, default=128, help='input batch size for validing (default: 128)')
     parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: BaseModel)')
->>>>>>> master
     parser.add_argument('--filename', type=str, default='best.pth', help='save file name (default: best.pth)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='validation data augmentation type (default: A_centercrop_trans)')
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
@@ -115,7 +102,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     inference(args)
-<<<<<<< HEAD
-=======
-
->>>>>>> master
