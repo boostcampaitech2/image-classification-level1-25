@@ -1,0 +1,16 @@
+program: train.py
+entity: boostcamp-25
+project: image-classification-level1-25
+method: bayes
+metric:
+  name: valid_f1_score
+  goal: maximize
+parameters:
+  lr:
+    values: [0.001,0.005]
+  optimizer:
+    values: ["Adam", "RMSprop"]
+  batch_size:
+    value: 16
+  epochs:
+    value: 3

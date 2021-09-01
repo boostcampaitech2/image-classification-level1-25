@@ -20,7 +20,7 @@ def basic_test_trans():
                         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
                         ])
 
-
+# resize후 vit 384 384
 def A_just_tensor():
     return A.Compose([
                         A.Normalize(),
@@ -83,7 +83,7 @@ def A_simple_trans():
                         Ap.ToTensorV2(),
                     ])
 
-
+# input size를 resize한 뒤에 vit돌려야한다
 def A_random_trans_no_cut():
     return A.Compose([
                         A.HorizontalFlip(p=0.5),
