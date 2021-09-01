@@ -236,6 +236,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_f1 = val_f1
+
                 
             torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_last.pth")
             print(
@@ -251,6 +252,8 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             print(f'[earlystop: {stop_cnt}] No future. bye bye~~')
             break
         stop_cnt += 1
+    log_wandb('best', val_acc, best_val_f1, val_loss, False)
+    
 
 
 
