@@ -3,14 +3,26 @@ entity: boostcamp-25
 project: image-classification-level1-25
 method: bayes
 metric:
-  name: valid_f1_score
+  name: best_f1_score
   goal: maximize
 parameters:
   lr:
     values: [0.001,0.005]
-  optimizer:
-    values: ["Adam", "RMSprop"]
   batch_size:
-    value: 16
+    values: [4, 32, 64]
   epochs:
-    value: 3
+    value: 20
+  wandb_unique_tag:
+    value: rexnet_h_tuning
+  name:
+    value: rexnet_h_tuning
+  model:
+    value: rexnet_200base 
+  usertrans:
+    value: trans 
+  trainaug: 
+    value: rexnet_trans
+  validaug:
+    value: rexnet_valid
+  mode:
+   value: ALL
