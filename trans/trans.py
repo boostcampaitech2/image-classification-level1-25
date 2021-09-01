@@ -341,3 +341,46 @@ class regnet_trans2_valid:
     def __call__(self, image):
         return self.transform(image=image)
 
+class efficientnetb2_trans1 :
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+            A.CenterCrop(height=384, width=384),
+            A.Resize(width=resize[0], height=resize[1]),
+            A.ShiftScaleRotate(p=0.7),
+            A.Normalize(mean=self.mean, std=self.std),
+            Ap.ToTensorV2(),
+        ])
+    def __call__(self, image):
+        return self.transform(image=image)
+
+class efficientnetb2_trans2 :
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+            A.CenterCrop(height=384, width=384),
+            A.Resize(width=resize[0], height=resize[1]),
+            A.HorizontalFlip(p=0.5),
+             A.GaussNoise(var_limit=(400, 600), p=0.1),
+            A.Normalize(mean=self.mean, std=self.std),
+            Ap.ToTensorV2(),
+        ])
+    def __call__(self, image):
+        return self.transform(image=image)
+
+class efficientnetb2_trans3 :
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+            A.CenterCrop(height=384, width=384),
+            A.Resize(width=resize[0], height=resize[1]),
+            A.ShiftScaleRotate(p=0.7),
+            A.GaussianBlur(),
+            A.Normalize(mean=self.mean, std=self.std),
+            Ap.ToTensorV2(),
+        ])
+    def __call__(self, image):
+        return self.transform(image=image)
