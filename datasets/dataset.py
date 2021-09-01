@@ -429,19 +429,16 @@ class MMteamDataset(Dataset):
         self.mode = mode
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
         df_origin['gender'] = df_origin['gender'].map({'male':0, 'female':1})
-        df_origin['gender_age_cls'] = df_origin.apply(lambda x : set_age(x['age']) + 3*set_gender(x['gender']) ,axis=1)
-        train_df, eval_df = train_test_split(df_origin, test_size=150, stratify=df_origin.gender_age_cls, random_state=25)
-
-        train_df = train_df.sample(frac=1).reset_index(drop=True)
+        df_origin = df_origin.sample(frac=1).reset_index(drop=True)
 
         train_share = 1 - val_ratio
-        total = len(train_df)
+        total = len(df_origin)
         if mode == 'ALL':
-            self.df_csv = train_df
+            self.df_csv = df_origin
         elif mode == 'train' :
-            self.df_csv = train_df.head(int(total*train_share)) 
+            self.df_csv = df_origin.head(int(total*train_share)) 
         elif mode == 'valid' :
-            self.df_csv = train_df.tail(total-int(total*train_share))
+            self.df_csv = df_origin.tail(total-int(total*train_share))
         else :
             raise Exception(f'train error {mode} not in [''ALL'', ''train'', ''test'']')
     
