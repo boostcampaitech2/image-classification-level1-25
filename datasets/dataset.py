@@ -257,12 +257,11 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
     def split_dataset(self) -> List[Subset]:
         return [Subset(self, indices) for phase, indices in self.indices.items()]
 
-
 class TestDataset(Dataset):
-    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transform = None):
+    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transfrom = None):
         self.img_paths = img_paths
-        if transform:
-            self.transform = transform
+        if transfrom:
+            self.transform = transfrom
         else:
             self.transform = transforms.Compose([
                 Resize(resize, Image.BILINEAR),

@@ -22,6 +22,7 @@ from torch.utils.data import Subset
 from datasets.dataset import MaskBaseDataset
 from module.loss import create_criterion
 from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split
 
 
 def seed_everything(seed):
@@ -159,7 +160,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             loss_value += loss.item()
             matches += (preds == labels).sum().item()
             f1_sum += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
-            if (idx + 1) % args.log_interval == 0 or idx + 1 == len(train_loader):
+            if ((idx + 1) % args.log_interval == 0) or ((idx + 1) == len(train_loader)):
                 train_loss = loss_value / (idx+1)
                 train_acc = matches / args.batch_size / (idx+1)
                 train_f1 = f1_sum / (idx+1)
@@ -261,32 +262,33 @@ if __name__ == '__main__':
     # load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
-    parser.add_argument('--seed', type=int, default=25, help='random seed (default: 25)')
+    parser.add_argument('--name', default='exp', help='model save at {SM_SAVE_DIR}/{name}')
     parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 1)')
+    parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: rexnet_200base)')
     parser.add_argument('--traindataset', type=str, default='basicDatasetA', help='train dataset augmentation type (default: basicDatasetA)')
     # parser.add_argument('--validdataset', type=str, default='basicDatasetA', help='validation dataset augmentation type (default: basicDatasetA)')
     parser.add_argument('--trainaug', type=str, default='A_simple_trans', help='train data augmentation type (default: A_simple_trans)')
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='validation data augmentation type (default: A_centercrop_trans)')
     parser.add_argument("--resize", nargs="+", type=list, default=[224, 224], help='resize size for image when training')
-    parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 32)')
-    parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 32)')
-    parser.add_argument('--model', type=str, default='rexnet_200base', help='model type (default: rexnet_200base)')
+    parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.1)')
-    parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
-    parser.add_argument('--name', default='exp', help='model save at {SM_SAVE_DIR}/{name}')
-    parser.add_argument('--userdataset', default='dataset', help='select user custom dataset')
+    parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 32)')
+    parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 32)')
+    parser.add_argument('--fold',type=int, default = 0, help = 'number of k-folds')
+    parser.add_argument('--earlystop', type=int, default=0, help='set earlystop count default 0 is No earlystop')
+    # parser.add_argument('--load_state',type=str, default = '', help = 'load_state dir')
+    
+    # soemtime useing
+    parser.add_argument('--seed', type=int, default=25, help='random seed (default: 25)')
+    parser.add_argument('--num_classes',type=int, default = 18, help = 'num_classes')
+    parser.add_argument('--mode',type=str, default = 'train', help = 'train mode')
     parser.add_argument('--usermodel', default='model', help='select user custom model')
     parser.add_argument('--usertrans', default='trans', help='select user custom transform')
-    parser.add_argument('--earlystop', type=int, default=0, help='set earlystop count default 0 is No earlystop')
-    parser.add_argument('--fold',type=int, default = 0, help = 'number of k-folds')
-    parser.add_argument('--num_classes',type=int, default = 18, help = 'num_classes')
-    # parser.add_argument('--load_state',type=str, default = '', help = 'load_state dir')
-    parser.add_argument('--mode',type=str, default = 'train', help = 'train mode')
-
+    parser.add_argument('--userdataset', default='dataset', help='select user custom dataset')
     
 
 
@@ -359,10 +361,14 @@ if __name__ == '__main__':
         )
         total = len(train_dataset.df_csv)
         val_share = int(total * args.val_ratio)
-        train_share = total - val_share
 
-        train_dataset.df_csv = train_dataset.df_csv.sample(frac=1).reset_index(drop=True).head(train_share)
-        valid_dataset.df_csv = valid_dataset.df_csv.sample(frac=1).reset_index(drop=True).tail(val_share)
+        train_df, valid_df = train_test_split(train_dataset.df_csv, test_size=val_share, stratify=train_dataset.df_csv.gender_age_cls, random_state=args.seed)
+
+        train_df.reset_index(drop=True, inplace=True)
+        valid_df.reset_index(drop=True, inplace=True)
+
+        train_dataset.df_csv = train_df
+        valid_dataset.df_csv = valid_df
 
         init_wandb('train', args)
         train(args, train_dataset, valid_dataset, train_transform, valid_transform)
