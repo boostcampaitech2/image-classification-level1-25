@@ -87,6 +87,7 @@ class rexnet_200base(nn.Module):
         x = self.superM(x)
         return x
     
+    
 class MultiModelMergeModel(nn.Module):
     def __init__(self, modelMASK, modelAGE, modelGENDER,
                     concatclasses : int = 8 , num_classes: int = 18,
