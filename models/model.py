@@ -86,18 +86,42 @@ class rexnet_200base(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.superM(x)
         return x
-    
-    
+
+class efficientnet_b2_pruned(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "efficientnet_b2_pruned", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
+            
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x 
+
+class regnety_032(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "regnety_032", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
+            
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x        
+
+
 class MultiModelMergeModel(nn.Module):
-    def __init__(self, modelMASK, modelAGE, modelGENDER,
+    def __init__(self, modelMASK, modelGENDER, modelAGE,
                     concatclasses : int = 8 , num_classes: int = 18,
                     prev_model_frz=True ):
         super().__init__()
         self.prev_model_frz = prev_model_frz
 
         self.modelMASK = modelMASK
-        self.modelAGE = modelAGE
         self.modelGENDER = modelGENDER
+        self.modelAGE = modelAGE
         self.classifier = nn.Sequential(
             nn.Linear(concatclasses, 32),
             nn.ReLU(inplace=True),
@@ -106,12 +130,12 @@ class MultiModelMergeModel(nn.Module):
         
     def forward(self, IMAGE):
         MASK = self.modelMASK(IMAGE)
-        AGE = self.modelAGE(IMAGE)
         GENDER = self.modelGENDER(IMAGE)
+        AGE = self.modelAGE(IMAGE)
         if self.prev_model_frz :
-            MERGED = torch.cat((MASK.detach(), AGE.detach(), GENDER.detach()), dim=1)
+            MERGED = torch.cat((MASK.detach(), GENDER.detach(), AGE.detach()), dim=1)
         else :
-            MERGED = torch.cat((MASK, AGE, GENDER), dim=1)
+            MERGED = torch.cat((MASK, GENDER, AGE), dim=1)
         MERGED = self.classifier(nn.functional.relu(MERGED))
         return MERGED
 
