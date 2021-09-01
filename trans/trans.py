@@ -1,3 +1,4 @@
+from albumentations.augmentations.transforms import GridDropout
 import numpy as np
 import torch
 from PIL import Image
@@ -154,6 +155,32 @@ class A_random_trans:
     def __call__(self, image):
         return self.transform(image=image)
         
+class rexnet_trans :
+    def __init__(self, resize) :
+        self.transform = A.Compose([
+                        A.CenterCrop(height=384, width=384),
+                        A.GridDropout(),
+                        A.Resize(height=256, width=256),
+
+                        A.Normalize(),
+                        Ap.ToTensorV2(),
+        ])
+
+    def __call__(self, image) :
+        return self.transform(image = image)
+
+class rexnet_valid :
+    def __init__(self, resize) :
+        self.transform = A.Compose([
+                        A.CenterCrop(height=384, width=384),
+                        A.Resize(height=256, width=256),
+
+                        A.Normalize(),
+                        Ap.ToTensorV2(),
+        ])
+
+    def __call__(self, image) :
+        return self.transform(image = image)        
 
 class A_random_trans2:
     def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
