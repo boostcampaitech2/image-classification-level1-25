@@ -50,6 +50,10 @@ def log_wandb(phase='train', acc=0, f1_score=0, loss=0, single_table=False):
     
     if single_table==True:
         log = {acc: acc, 'f1_score': f1_score, 'loss':loss}
+    
+    if phase=='best':
+        log = {f'{phase}_f1_score': f1_score}
+
     wandb.log(log)
 
         
