@@ -1,0 +1,37 @@
+{
+    "seed": 25,
+    "epochs": 20,
+    "traindataset": "basicDatasetA",
+    "trainaug": "rexnet_trans",
+    "validaug": "rexnet_valid",
+    "resize": [
+        [
+            "2",
+            "5",
+            "6"
+        ]
+    ],
+    "batch_size": 32,
+    "valid_batch_size": 32,
+    "model": "rexnet_200base",
+    "optimizer": "Adam",
+    "lr": 0.001,
+    "val_ratio": 0.2,
+    "criterion": "cross_entropy",
+    "lr_decay_step": 20,
+    "log_interval": 20,
+    "name": "Rexnet_test",
+    "userdataset": "dataset",
+    "usermodel": "model",
+    "usertrans": "trans",
+    "earlystop": 0,
+    "fold": 0,
+    "num_classes": 18,
+    "mode": "ALL",
+    "data_dir": "/opt/ml/input/data/train/",
+    "save_dir": "save/Rexnet_test2",
+    "dotenv_path": "/opt/ml/image-classification-level1-25/wandb.env",
+    "wandb_entity": "boostcamp-25",
+    "wandb_project": "image-classification-level1-25",
+    "wandb_unique_tag": "tag_name"
+}
