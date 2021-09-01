@@ -112,7 +112,6 @@ class regnety_032(nn.Module):
         return x        
 
 
-    
 class MultiModelMergeModel(nn.Module):
     def __init__(self, modelMASK, modelGENDER, modelAGE,
                     concatclasses : int = 8 , num_classes: int = 18,
