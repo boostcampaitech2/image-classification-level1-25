@@ -14,7 +14,7 @@ import numpy as np
 import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 from sklearn.model_selection import train_test_split
 from torchvision import transforms
 
@@ -128,8 +128,8 @@ def train(args):
     train_loader = DataLoader(
         train_dataset,
         batch_size=args.batch_size,
-        # num_workers=multiprocessing.cpu_count()//2,
-        num_workers=0,
+        num_workers=multiprocessing.cpu_count()//2,
+        # num_workers=0,
         shuffle=True,
         pin_memory=use_cuda,
         drop_last=True,
@@ -138,8 +138,8 @@ def train(args):
     val_loader = DataLoader(
         valid_dataset,
         batch_size=args.valid_batch_size,
-        # num_workers=multiprocessing.cpu_count()//2,
-        num_workers=0,
+        num_workers=multiprocessing.cpu_count()//2,
+        # num_workers=0,
         shuffle=False,
         pin_memory=use_cuda,
         drop_last=True,
@@ -149,6 +149,8 @@ def train(args):
     num_classes_dict = train_dataset.num_classes # dictionary types, keys : ['mask', 'gender', 'age', 'concat', 'merged'], values : [3, 2, 3, 8, 18]
     labels_classes = ['mask', 'gender', 'age']
     model_dict = {}
+    optimizer_dict = {}
+    scheduler_dict = {}
     
     # -- model
     ## -- multi model
@@ -157,32 +159,28 @@ def train(args):
         model_dict[label_class] = model_module(
             num_classes=num_classes_dict[label_class]
         ).to(device)
-        model_dict[label_class] = torch.nn.DataParallel(model_dict[label_class])
+        # model_dict[label_class] = torch.nn.DataParallel(model_dict[label_class])
 
-    ## -- merged mergedmodel
-    model_module = getattr(import_module("models."+args.usermodel), args.mergedmodel)  # default: MultiModelMergeModel
-    model_dict['merged'] = model_module(
-        model_dict['mask'], model_dict['gender'], model_dict['age'],
-        concatclasses=num_classes_dict['concat'], num_classes=num_classes_dict['merged'],
-        prev_model_frz=args.prev_model_frz
-    ).to(device)
-    model_dict['merged'] = torch.nn.DataParallel(model_dict['merged'])
-    
-    labels_classes.append('merged')
 
     # -- loss & metric
     for label_class in labels_classes :
         criterion = create_criterion(args.criterion)  # default: cross_entropy
         opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: Adam
-        optimizer = opt_module(
+        optimizer_dict[label_class] = opt_module(
             filter(lambda p: p.requires_grad, model_dict[label_class].parameters()),
             lr=args.lr,
             weight_decay=5e-4
         )
-        scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+        scheduler_dict[label_class] = StepLR(optimizer_dict[label_class], args.lr_decay_step, gamma=0.5)
 
     # -- logging
-    logger = SummaryWriter(log_dir=save_dir)
+    # logger = SummaryWriter(log_dir=save_dir)
+    try:
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+    except OSError:
+        print ('Error: Creating directory. ' +  save_dir)
+
     with open(os.path.join(save_dir, 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
     
@@ -197,9 +195,10 @@ def train(args):
         num_epoch = int(args.epochs[idx])
         for epoch in range(num_epoch):
             # train loop
-            model_dict[label_class].train() ## MM model
+            model_dict[split_list].train() ## MM model
             loss_value = 0
             matches = 0
+            f1_sum = 0
             print(f"Epoch[{epoch}/{num_epoch}]")
 
             for idx, train_batch in enumerate(pbar := tqdm(train_loader, ncols=100)):
@@ -207,68 +206,53 @@ def train(args):
                 inputs = inputs.to(device)
                 labels = labels_dict[split_list].to(device)  ## MM model
 
-                optimizer.zero_grad()
+                optimizer_dict[split_list].zero_grad() ## MM model
 
-                outs = model_dict[label_class](inputs)   ## MM model
+                outs = model_dict[split_list](inputs)   ## MM model
                 preds = torch.argmax(outs, dim=-1)
                 loss = criterion(outs, labels)
 
                 loss.backward()
-                optimizer.step()
+                optimizer_dict[split_list].step()  ## MM model
 
                 loss_value += loss.item()
                 matches += (preds == labels).sum().item()
+                f1_sum += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
                 if (idx + 1) % args.log_interval == 0:
-                    train_loss = loss_value / args.log_interval
-                    train_acc = matches / args.batch_size / args.log_interval
+                    train_loss = loss_value / (idx+1)
+                    train_acc = matches / args.batch_size / (idx+1)
+                    train_f1 = f1_sum / (idx+1)
+                    current_lr = get_lr(optimizer_dict[split_list])
+                    pbar.set_description(f"loss_{train_loss:4.4}, f1_{train_f1:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
 
-                    current_lr = get_lr(optimizer)
-                    pbar.set_description(f"loss_{train_loss:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
-                    # print(
-                    #     f"Epoch[{epoch}/{num_epoch}]({idx + 1}/{len(train_loader)}) || "
-                    #     f"training loss {train_loss:4.4} || training accuracy {train_acc:4.2%} || lr {current_lr}"
-                    # )
-                    logger.add_scalar("Train/loss", train_loss, epoch * len(train_loader) + idx)
-                    logger.add_scalar("Train/accuracy", train_acc, epoch * len(train_loader) + idx)
-
-                    loss_value = 0
-                    matches = 0
-
-            scheduler.step()
+            scheduler_dict[split_list].step()
 
             # val loop
             with torch.no_grad():
                 print("Calculating validation results...")
-                model_dict[label_class].eval()   ## MM model
+                model_dict[split_list].eval()   ## MM model
                 val_loss_items = []
                 val_acc_items = []
+                val_f1_items = []
                 figure = None
-                running_f1 = 0
                 for val_batch in tqdm(val_loader, ncols=100):
                     inputs, labels_dict = val_batch
                     inputs = inputs.to(device)
                     labels = labels_dict[split_list].to(device) ## MM model
 
-                    outs = model_dict[label_class](inputs)   ## MM model
+                    outs = model_dict[split_list](inputs)   ## MM model
                     preds = torch.argmax(outs, dim=-1)
 
                     loss_item = criterion(outs, labels).item()
                     acc_item = (labels == preds).sum().item()
+                    f1 = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
                     val_loss_items.append(loss_item)
                     val_acc_items.append(acc_item)
-                    running_f1 += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average = 'macro')
-                    # 한번씩 여기서 미친듯이 렉먹는듯
-                    # if figure is None:
-                    #     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
-                    #     inputs_np = MaskBaseDataset.denormalize_image(inputs_np, valid_transform.mean, valid_transform.std)
-                    #     figure = grid_image(
-                    #         inputs_np, labels, preds, n=16, shuffle=args.validdataset != "MaskSplitByProfileDataset"
-                    #     )
-                    
+                    val_f1_items.append(f1)
 
                 val_loss = np.sum(val_loss_items) / len(val_loader)
                 val_acc = np.sum(val_acc_items) / len(valid_dataset)
-                val_f1 = running_f1 / len(val_loader)
+                val_f1 = np.sum(val_f1_items) / len(val_loader)
 
                 if val_loss < best_val_loss:
                     best_val_loss = val_loss
@@ -277,9 +261,8 @@ def train(args):
                 #     print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
                 #     torch.save(model.state_dict(), f"{save_dir}/best.pth")
                     best_val_acc = val_acc
-
-                if val_f1 > best_val_f1 :
                     print(f"New best model for val f1 score : {val_f1:.4}! saving the best model..")
+                if val_f1 > best_val_f1 :
                     torch.save(model_dict[label_class].state_dict(), f"{save_dir}/{split_list}_best.pth")     ## MM model
                     best_val_f1 = val_f1
                 torch.save(model_dict[label_class].state_dict(), f"{save_dir}/{split_list}_last.pth")     ## MM model
@@ -287,10 +270,154 @@ def train(args):
                     f"[Val] acc : {val_acc:4.2%}, f1 : {val_f1:.4f}, loss: {val_loss:4.2} || "
                     f"best acc : {best_val_acc:4.2%}, best f1: {best_val_f1:.4f}, best loss: {best_val_loss:4.2}"
                 )
-                logger.add_scalar("Val/loss", val_loss, epoch)
-                logger.add_scalar("Val/accuracy", val_acc, epoch)
-                logger.add_scalar("Val/f1", val_f1, epoch)
-                # logger.add_figure("results", figure, epoch)
+
+                print()
+
+    print(f'-'*50)
+    print('merged_model')
+    # ## -- merged mergedmodel
+    model_module = getattr(import_module("models."+args.usermodel), args.mergedmodel)  # default: MultiModelMergeModel
+    merged_model = model_module(
+        model_dict['mask'], model_dict['gender'], model_dict['age'], 
+        concatclasses=num_classes_dict['concat'], num_classes=num_classes_dict['merged'],
+        prev_model_frz=args.prev_model_frz
+    ).to(device)
+
+    best_val_loss = np.inf
+    best_val_acc = 0
+    best_val_f1 = 0
+    
+    if args.mergedmodel == 'MultiModelMergeModel' : ## model test
+        criterion = create_criterion(args.criterion)  # default: cross_entropy
+        opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: Adam
+        merged_optimizer = opt_module(
+            filter(lambda p: p.requires_grad, merged_model.parameters()),
+            lr=args.lr,
+            weight_decay=5e-4
+        )
+        merged_scheduler = StepLR(merged_optimizer, args.lr_decay_step, gamma=0.5)
+        
+        num_epoch = int(args.epochs[-1])
+
+        for epoch in range(num_epoch):
+
+                # train loop
+                merged_model.train() ## MM model
+                loss_value = 0
+                matches = 0
+                f1_sum = 0
+                print(f"Epoch[{epoch}/{num_epoch}]")
+
+                for idx, train_batch in enumerate(pbar := tqdm(train_loader, ncols=100)):
+                    inputs, labels_dict = train_batch
+                    inputs = inputs.to(device)
+                    labels = labels_dict['merged'].to(device)  ## MM model
+
+                    merged_optimizer.zero_grad() ## MM model
+
+                    outs = merged_model(inputs)   ## MM model
+                    preds = torch.argmax(outs, dim=-1)
+                    loss = criterion(outs, labels)
+
+                    loss.backward()
+                    merged_optimizer.step()  ## MM model
+
+                    loss_value += loss.item()
+                    matches += (preds == labels).sum().item()
+                    f1_sum += f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
+                    if (idx + 1) % args.log_interval == 0:
+                        train_loss = loss_value / (idx+1)
+                        train_acc = matches / args.batch_size / (idx+1)
+                        train_f1 = f1_sum / (idx+1)
+                        current_lr = get_lr(merged_optimizer)
+                        pbar.set_description(f"loss_{train_loss:4.4}, f1_{train_f1:4.4}, acc_{train_acc:4.2%}, lr_{current_lr}")
+                merged_scheduler.step()
+
+                # val loop
+                with torch.no_grad():
+                    print("Calculating validation results...")
+                    merged_model.eval()   ## MM model
+                    val_loss_items = []
+                    val_acc_items = []
+                    val_f1_items = []
+                    figure = None
+                    for val_batch in tqdm(val_loader, ncols=100):
+                        inputs, labels_dict = val_batch
+                        inputs = inputs.to(device)
+                        labels = labels_dict['merged'].to(device) ## MM model
+
+                        outs = merged_model(inputs)   ## MM model
+                        preds = torch.argmax(outs, dim=-1)
+
+                        loss_item = criterion(outs, labels).item()
+                        acc_item = (labels == preds).sum().item()
+                        f1 = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
+                        val_loss_items.append(loss_item)
+                        val_acc_items.append(acc_item)
+                        val_f1_items.append(f1)
+
+                    val_loss = np.sum(val_loss_items) / len(val_loader)
+                    val_acc = np.sum(val_acc_items) / len(valid_dataset)
+                    val_f1 = np.sum(val_f1_items) / len(val_loader)
+
+                    if val_loss < best_val_loss:
+                        best_val_loss = val_loss
+                        
+                    if val_acc > best_val_acc:
+                        best_val_acc = val_acc
+                        print(f"New best model for val f1 score : {val_f1:.4}! saving the best model..")
+                    if val_f1 > best_val_f1 :
+                        torch.save(merged_model.state_dict(), f"{save_dir}/{split_list}_best.pth")     ## MM model
+                        best_val_f1 = val_f1
+                    torch.save(merged_model.state_dict(), f"{save_dir}/{split_list}_last.pth")     ## MM model
+                    print(
+                        f"[Val] acc : {val_acc:4.2%}, f1 : {val_f1:.4f}, loss: {val_loss:4.2} || "
+                        f"best acc : {best_val_acc:4.2%}, best f1: {best_val_f1:.4f}, best loss: {best_val_loss:4.2}"
+                    )
+                    print()
+    else :  ## model test
+        num_epoch = int(args.epochs[-1])
+        for epoch in range(num_epoch):
+            with torch.no_grad():
+                print("Calculating validation results...")
+                merged_model.eval()   ## MM model
+                val_loss_items = []
+                val_acc_items = []
+                val_f1_items = []
+
+                for val_batch in tqdm(val_loader, ncols=100):
+                    inputs, labels_dict = val_batch
+                    inputs = inputs.to(device)
+                    labels = labels_dict['merged'].to(device) ## MM model
+                    
+                    outs = merged_model(inputs)   ## MM model
+                    preds = torch.argmax(outs, dim=-1)
+                    
+                    loss_item = criterion(outs, labels).item()
+                    acc_item = (labels == preds).sum().item()
+                    f1 = f1_score(labels.data.cpu().numpy(), preds.cpu().numpy(), average='macro')
+                    val_loss_items.append(loss_item)
+                    val_acc_items.append(acc_item)
+                    val_f1_items.append(f1)
+
+                val_loss = np.sum(val_loss_items) / len(val_loader)
+                val_acc = np.sum(val_acc_items) / len(valid_dataset)
+                val_f1 = np.sum(val_f1_items) / len(val_loader)
+
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    
+                if val_acc > best_val_acc:
+                    best_val_acc = val_acc
+                    print(f"New best model for val f1 score : {val_f1:.4}! saving the best model..")
+                if val_f1 > best_val_f1 :
+                    torch.save(merged_model.state_dict(), f"{save_dir}/{split_list}_best.pth")     ## MM model
+                    best_val_f1 = val_f1
+                torch.save(merged_model.state_dict(), f"{save_dir}/{split_list}_last.pth")     ## MM model
+                print(
+                    f"[Val] acc : {val_acc:4.2%}, f1 : {val_f1:.4f}, loss: {val_loss:4.2} || "
+                    f"best acc : {best_val_acc:4.2%}, best f1: {best_val_f1:.4f}, best loss: {best_val_loss:4.2}"
+                )
                 print()
 
 if __name__ == '__main__':

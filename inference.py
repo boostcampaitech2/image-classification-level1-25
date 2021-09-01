@@ -11,7 +11,9 @@ from datasets.dataset import TestDatasetA, MaskBaseDataset
 
 def load_model(saved_model, filename, modelname, num_classes, device):
     model = None
-    if len(data := [s for s in os.listdir(saved_model) if s.endswith(filename)]) == 1:
+    if len(data := [s for s in os.listdir(saved_model) if s.endswith(filename)]) == 0:
+        raise Exception(f'cant find file. {filename}')
+    elif len(data) == 1 :
         model_cls = getattr(import_module("models.model"), modelname)
         model = model_cls(
             num_classes=num_classes
@@ -100,4 +102,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     inference(args)
-
