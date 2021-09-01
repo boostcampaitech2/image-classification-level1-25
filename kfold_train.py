@@ -332,9 +332,9 @@ def train(data_dir, model_dir, args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    from dotenv import load_dotenv
+    # from dotenv import load_dotenv
     import os
-    load_dotenv(verbose=True)
+    # load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
     parser.add_argument('--seed', type=int, default=25, help='random seed (default: 25)')
