@@ -24,6 +24,7 @@ from module.loss import create_criterion
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
+
 def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -109,7 +110,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
     )
 
     device = torch.device("cuda" if use_cuda else "cpu")
-
+    print(device)
     # -- model
     model_module = getattr(import_module("models."+args.usermodel), args.model)  # default: rexnet_200base
     model = model_module(
@@ -146,13 +147,37 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             inputs, labels = train_batch
             inputs = inputs.to(device)
             labels = labels.to(device)
+            
 
-            optimizer.zero_grad()
+            if args.cutmix == 'True':
+                #cutmix
+                lam = np.random.beta(0.5, 0.5)
+                rand_index = torch.randperm(inputs.size()[0]).to(device)
+                target_a = labels
+                target_b = labels[rand_index]   
+        
+                W = inputs.size()[2]
+                H = inputs.size()[3]
+                cut_rat = np.sqrt(1-lam)
+                cut_h = np.int(H*cut_rat)
+                cy = np.random.randint(H)
+                bbx1 = 0
+                bby1 = np.clip(cy-cut_h//2,0,H)
+                bbx2 = W
+                bby2 = np.clip(cy+cut_h//2,0,H)
 
-            outs = model(inputs)
+                inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
+                # adjust lambda to exactly match pixel ratio
+                lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
+                # compute output
+                outs = model(inputs)
+                loss = criterion(outs, target_a) * lam + criterion(outs, target_b) * (1. - lam)  
+            else:
+                outs = model(inputs)
+                loss = criterion(outs, labels)
+
             preds = torch.argmax(outs, dim=-1)
-            loss = criterion(outs, labels)
-
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
@@ -225,17 +250,16 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
-                print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+                #print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                stop_cnt = 0
+                #stop_cnt = 0
                 best_val_loss = val_loss
                 
             if val_f1 > best_val_f1:
-                # print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
+                print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                # stop_cnt = 0
+                stop_cnt = 0
                 best_val_f1 = val_f1
-
                 
             torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_last.pth")
             print(
@@ -251,8 +275,6 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             print(f'[earlystop: {stop_cnt}] No future. bye bye~~')
             break
         stop_cnt += 1
-    log_wandb('best', val_acc, best_val_f1, val_loss, False)
-    
 
 
 
@@ -305,7 +327,9 @@ if __name__ == '__main__':
     parser.add_argument('--wandb_project', default='image-classification-level1-25', help='input your wandb project')
     parser.add_argument('--wandb_unique_tag', default='tag_name', help='input your wandb unique tag')
 
-
+    #cutmix
+    parser.add_argument('--cutmix',type=str, default = 'True', help = 'use cutmix')
+    
     args = parser.parse_args()
 
 
@@ -407,3 +431,4 @@ if __name__ == '__main__':
             init_wandb('train', args, fold=fold)
             
             train(args, train_dataset, valid_dataset, train_transform, valid_transform)
+

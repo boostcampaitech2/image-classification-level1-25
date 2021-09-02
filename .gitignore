@@ -4,6 +4,7 @@ __pycache__/
 etc/
 base_code/
 save/**/2021*
+save/MM*
 save/exp*
 mission/
 wandb/
@@ -16,3 +17,5 @@ origin_trainer_single_test.ipynb
 wandb.env
 team_wandb_trainer.ipynb
 teamtrain.csv
+sweep_dh.yaml
+sweep_trans.yaml
