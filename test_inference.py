@@ -11,17 +11,21 @@ from datasets.dataset import TestDataset, MaskBaseDataset
 
 from tqdm import tqdm
 
-def load_model(saved_model, modelname, num_classes, device):
-    model_cls = getattr(import_module("models.model"), args.model)
+def load_model(saved_model_path, file_name, model_name, num_classes, device):
+    cur_model_name = model_name
+    if model_name == 'rexnet_200base_kj':
+        cur_model_name = 'rexnet_200base'
+    model_cls = getattr(import_module("models.model"), cur_model_name)
     model = model_cls(
         num_classes=num_classes
     )
-    # model = torch.nn.DataParallel(model)
+    if model_name == 'rexnet_200base_kj':
+        model = torch.nn.DataParallel(model)
     # tarpath = os.path.join(saved_model, 'best.tar.gz')
     # tar = tarfile.open(tarpath, 'r:gz')
     # tar.extractall(path=saved_model)
 
-    model_path = os.path.join(saved_model, modelname)
+    model_path = os.path.join(saved_model_path, file_name)
     model.load_state_dict(torch.load(model_path, map_location=device))
 
     return model
@@ -58,23 +62,36 @@ def inference(data_dir, args):
     # dataset.set_transform(valid_transform)
 
 
-    test_preds = [0 for _ in range(len(dataset))]
+    all_preds = [0 for _ in range(len(dataset))]
     print(os.listdir(args.save_dir))
     for saved_model in os.listdir(args.save_dir):
-        if saved_model[-8:] == 'best.pth':
-            model = load_model(args.save_dir, saved_model, num_classes, device).to(device)
+        if saved_model[-9:] == 'final.pth':
+            model_name = ''
+            if 'rexnet3_final.pth' == saved_model:
+                model_name = 'rexnet_200base_kj'
+            elif 'rexnet' in saved_model:
+                model_name = 'rexnet_200base'
+            elif 'efficient' in saved_model:
+                model_name = 'efficientnet_b2_pruned'
+            elif 'regnety' in saved_model:
+                model_name = 'regnety_032'
+            model = load_model(args.save_dir, saved_model, model_name, num_classes, device).to(device)
+            print(f'now processing {saved_model}')
             model.eval()
-            all_predictions = []
+            model_predictions = []
             for images in tqdm(loader):
                 with torch.no_grad():
                     images = images.to(device)
-                    outputs = model(images)
-                    all_predictions.extend(outputs.cpu().numpy())
+                    s = torch.nn.Softmax(dim=1)
+                    outputs = s(model(images))
+                    model_predictions.extend(outputs.cpu().numpy())
 
-            test_preds = [x+y for x,y in zip(test_preds,all_predictions)]
+            all_preds = [x+y for x,y in zip(all_preds, model_predictions)]
+            info['ans'] = np.argmax(all_preds,axis=1)
+            info.to_csv(os.path.join(args.save_dir, f'output.csv'), index=False)
+            print(f'Inference Done!')
 
-
-    info['ans'] = np.argmax(test_preds,axis=1)
+    info['ans'] = np.argmax(all_preds,axis=1)
     info.to_csv(os.path.join(args.save_dir, f'output.csv'), index=False)
     print(f'Inference Done!')
 
@@ -89,7 +106,7 @@ if __name__ == '__main__':
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
-    parser.add_argument('--save_dir', type=str, default=os.environ.get('SM_save_DATA_DIR', './save'))
+    parser.add_argument('--save_dir', type=str, default=os.environ.get('SM_save_DATA_DIR', './save/final/real_final_2'))
     parser.add_argument('--validaug', type=str, default='A_centercrop_trans', help='data augmentation type (default: BaseAugmentation)')
     
     args = parser.parse_args()

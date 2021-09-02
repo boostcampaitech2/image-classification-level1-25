@@ -3,6 +3,7 @@ import random
 from collections import defaultdict
 from enum import Enum
 from typing import Tuple, List
+from albumentations.augmentations.crops.functional import center_crop
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ from torch.utils.data import Dataset, Subset, random_split
 from torchvision import transforms
 from torchvision.transforms import *
 from sklearn.model_selection import train_test_split
+import torchvision
 
 IMG_EXTENSIONS = [
     ".jpg", ".JPG", ".jpeg", ".JPEG", ".png",
@@ -264,6 +266,7 @@ class TestDataset(Dataset):
             self.transform = transfrom
         else:
             self.transform = transforms.Compose([
+                CenterCrop((384,384)),
                 Resize(resize, Image.BILINEAR),
                 ToTensor(),
                 Normalize(mean=mean, std=std),
@@ -279,20 +282,20 @@ class TestDataset(Dataset):
     def __len__(self):
         return len(self.img_paths)
 
-class TestDatasetA(Dataset):
-    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transform = None):
-        self.img_paths = img_paths
-        self.transform = transform
+# class TestDatasetA(Dataset):
+#     def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), transform = None):
+#         self.img_paths = img_paths
+#         self.transform = transform
 
-    def __getitem__(self, index):
-        image = Image.open(self.img_paths[index])
+#     def __getitem__(self, index):
+#         image = Image.open(self.img_paths[index])
 
-        if self.transform:
-            image = self.transform(image=np.array(image))['image'].float()
-        return image
+#         if self.transform:
+#             image = self.transform(image=np.array(image))['image'].float()
+#         return image
 
-    def __len__(self):
-        return len(self.img_paths)
+#     def __len__(self):
+#         return len(self.img_paths)
 
 
 class basicDatasetA(Dataset):

@@ -220,13 +220,13 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
 
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
                 print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 stop_cnt = 0
                 best_val_loss = val_loss
                 
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.1)')
-    parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
+    parser.add_argument('--lr_decay_step', type=int, default=3, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
     parser.add_argument('--batch_size', type=int, default=32, help='input batch size for training (default: 32)')
     parser.add_argument('--valid_batch_size', type=int, default=32, help='input batch size for validing (default: 32)')
