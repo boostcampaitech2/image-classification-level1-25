@@ -24,7 +24,6 @@ from module.loss import create_criterion
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
-
 def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -409,4 +408,3 @@ if __name__ == '__main__':
             init_wandb('train', args, fold=fold)
             
             train(args, train_dataset, valid_dataset, train_transform, valid_transform)
-

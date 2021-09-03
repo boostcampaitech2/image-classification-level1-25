@@ -112,7 +112,6 @@ class regnety_032(nn.Module):
         return x        
 
 
-    
 class MultiModelMergeModel(nn.Module):
     def __init__(self, modelMASK, modelGENDER, modelAGE,
                     concatclasses : int = 8 , num_classes: int = 18,
@@ -155,6 +154,14 @@ class ensemble(nn.Module):
             result.append(s(M(x))) 
         result = torch.stack(result, dim=0)
         return torch.sum(result, dim=0)
+
+class regnety_032(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "regnety_032", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
     
 
 class tf_efficientnetv2_b3(nn.Module):

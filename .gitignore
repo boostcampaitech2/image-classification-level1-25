@@ -13,6 +13,11 @@ note.ipynb
 my_trainer.ipynb
 origin_trainer_bj.ipynb
 origin_trainer_single_test.ipynb
+<<<<<<< Updated upstream
 
 team_wandb_trainer.ipynb
+=======
+>>>>>>> Stashed changes
 teamtrain.csv
+sweep_dh.yaml
+sweep_trans.yaml
