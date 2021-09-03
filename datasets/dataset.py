@@ -12,6 +12,7 @@ from torch.utils.data import Dataset, Subset, random_split
 from torchvision import transforms
 from torchvision.transforms import *
 from sklearn.model_selection import train_test_split
+from trans.trans import A_centercrop_trans
 
 IMG_EXTENSIONS = [
     ".jpg", ".JPG", ".jpeg", ".JPEG", ".png",
@@ -300,6 +301,7 @@ class basicDatasetA(Dataset):
     
     def __init__(self, data_dir, mode = 'ALL', transform = None):
         self.main_path = data_dir
+        self.origin_trans = A_centercrop_trans()
         self.transform = transform
         self.mode = mode
         df_origin = pd.read_csv(os.path.join(self.main_path, 'train.csv'))
@@ -323,15 +325,24 @@ class basicDatasetA(Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
+        if index >= len(self.df_csv)*7:
+            is_trans = True
+            index = index - len(self.df_csv)*7
+        else :
+            is_trans = False
         main_index, sub_index = index//7, index%7
+ 
         sub_path = self.df_csv.iloc[main_index]['path']
         file_path = os.path.join(self.main_path, 'images', sub_path)
         files = [file_name for file_name in os.listdir(file_path) if file_name[0] != '.']
 
         image = Image.open(os.path.join(file_path, files[sub_index]))
-
-        if self.transform:
+        if is_trans:
+            image = self.origin_trans(image=np.array(image))['image'].float()
+        elif not is_trans and self.transform:
             image = self.transform(image=np.array(image))['image'].float()
+
+        
 
         y = 0
 
@@ -349,7 +360,7 @@ class basicDatasetA(Dataset):
         return image, y#, age #age는 사진 수동 검증용, 나이 파악이 힘듬
 
     def __len__(self):
-        return len(self.df_csv)*7
+        return len(self.df_csv)*7*2
 
 # def set_gender(gender):
 #     return 0 if gender == 'male' else 1

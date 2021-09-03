@@ -156,3 +156,15 @@ class ensemble(nn.Module):
         result = torch.stack(result, dim=0)
         return torch.sum(result, dim=0)
     
+
+class tf_efficientnetv2_b3(nn.Module):
+    def __init__(self, num_classes: int = 1000):
+        super().__init__()
+        self.superM = timm.create_model(model_name = "tf_efficientnetv2_b3", # 불러올 모델 architecture,
+                                        num_classes=num_classes, # 예측 해야하는 class 수
+                                        pretrained = True # 사전학습된 weight 불러오기
+                                    )
+            
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.superM(x)
+        return x 
