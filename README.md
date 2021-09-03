@@ -16,8 +16,6 @@ image-classification-level1-25/
 ├── TTA_inference.py
 ├── TTA_teameval.py
 │
-├── train_cutmix.py
-│
 ├── origin_trainer.ipynb
 │
 └── evaluation.py
