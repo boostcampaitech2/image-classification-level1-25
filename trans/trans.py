@@ -60,6 +60,82 @@ class CustomAugmentation:
     def __call__(self, image):
         return self.transform(image)
 
+
+
+
+class A_cutmix_trans2:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=300, width=300),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.HorizontalFlip(p=0.5),
+                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
+                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
+                                    A.OneOf([
+                                        A.GridDropout(),
+                                        A.GlassBlur(),
+                                        A.GaussianBlur(),
+                                        A.ColorJitter(),
+                                        A.Equalize(),
+                                        A.ChannelDropout(),
+                                        A.ChannelShuffle(),
+                                    ], p=0.2),
+                                    A.Normalize(),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
+
+class A_cutmix_trans3:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=300, width=300),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.HorizontalFlip(p=0.5),
+                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.5),
+                                    A.GaussNoise(var_limit=(400, 600), p=0.4),
+                                    A.OneOf([
+                                        A.GridDropout(),
+                                        A.GlassBlur(),
+                                        A.GaussianBlur(),
+                                        A.ColorJitter(),
+                                        A.Equalize(),
+                                        A.ChannelDropout(),
+                                        A.ChannelShuffle(),
+                                    ], p=0.3),
+                                    A.Normalize(),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
+
+
+
+class A_simple_cutmix_trans:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=300, width=300),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.HorizontalFlip(p=0.5),
+                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
+                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
+                                    A.Normalize(),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
         
 class A_resize_trans:
     def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
@@ -154,6 +230,35 @@ class A_random_trans:
 
     def __call__(self, image):
         return self.transform(image=image)
+
+
+class A_cutmix_trans:
+    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
+        self.mean = mean
+        self.std = std
+        self.transform = A.Compose([
+                                    A.CenterCrop(height=340, width=340),
+                                    A.RandomCrop(height=300, width=300, p=1),
+                                    A.Resize(width=resize[0], height=resize[1]),
+                                    A.HorizontalFlip(p=0.5),
+                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
+                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
+                                    A.OneOf([
+                                        A.GridDropout(),
+                                        A.GlassBlur(),
+                                        A.GaussianBlur(),
+                                        A.ColorJitter(),
+                                        A.Equalize(),
+                                        A.ChannelDropout(),
+                                        A.ChannelShuffle(),
+                                    ], p=0.2),
+                                    A.Normalize(),
+                                    Ap.ToTensorV2(),
+                                ])
+
+    def __call__(self, image):
+        return self.transform(image=image)
+
         
 class rexnet_trans :
     def __init__(self, resize) :
@@ -208,103 +313,3 @@ class A_random_trans2:
                                 ])
 
 
-class A_cutmix_trans:
-    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
-        self.mean = mean
-        self.std = std
-        self.transform = A.Compose([
-                                    A.CenterCrop(height=340, width=340),
-                                    A.RandomCrop(height=300, width=300, p=1),
-                                    A.Resize(width=resize[0], height=resize[1]),
-                                    A.HorizontalFlip(p=0.5),
-                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
-                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
-                                    A.OneOf([
-                                        A.GridDropout(),
-                                        A.GlassBlur(),
-                                        A.GaussianBlur(),
-                                        A.ColorJitter(),
-                                        A.Equalize(),
-                                        A.ChannelDropout(),
-                                        A.ChannelShuffle(),
-                                    ], p=0.2),
-                                    A.Normalize(),
-                                    Ap.ToTensorV2(),
-                                ])
-
-    def __call__(self, image):
-        return self.transform(image=image)
-
-
-class A_cutmix_trans2:
-    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
-        self.mean = mean
-        self.std = std
-        self.transform = A.Compose([
-                                    A.CenterCrop(height=300, width=300),
-                                    A.Resize(width=resize[0], height=resize[1]),
-                                    A.HorizontalFlip(p=0.5),
-                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
-                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
-                                    A.OneOf([
-                                        A.GridDropout(),
-                                        A.GlassBlur(),
-                                        A.GaussianBlur(),
-                                        A.ColorJitter(),
-                                        A.Equalize(),
-                                        A.ChannelDropout(),
-                                        A.ChannelShuffle(),
-                                    ], p=0.2),
-                                    A.Normalize(),
-                                    Ap.ToTensorV2(),
-                                ])
-
-    def __call__(self, image):
-        return self.transform(image=image)
-
-
-class A_cutmix_trans3:
-    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
-        self.mean = mean
-        self.std = std
-        self.transform = A.Compose([
-                                    A.CenterCrop(height=300, width=300),
-                                    A.Resize(width=resize[0], height=resize[1]),
-                                    A.HorizontalFlip(p=0.5),
-                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.5),
-                                    A.GaussNoise(var_limit=(400, 600), p=0.4),
-                                    A.OneOf([
-                                        A.GridDropout(),
-                                        A.GlassBlur(),
-                                        A.GaussianBlur(),
-                                        A.ColorJitter(),
-                                        A.Equalize(),
-                                        A.ChannelDropout(),
-                                        A.ChannelShuffle(),
-                                    ], p=0.3),
-                                    A.Normalize(),
-                                    Ap.ToTensorV2(),
-                                ])
-
-    def __call__(self, image):
-        return self.transform(image=image)
-
-
-
-
-class A_simple_cutmix_trans:
-    def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
-        self.mean = mean
-        self.std = std
-        self.transform = A.Compose([
-                                    A.CenterCrop(height=300, width=300),
-                                    A.Resize(width=resize[0], height=resize[1]),
-                                    A.HorizontalFlip(p=0.5),
-                                    A.RandomBrightnessContrast(brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), p=0.3),
-                                    A.GaussNoise(var_limit=(400, 600), p=0.1),
-                                    A.Normalize(),
-                                    Ap.ToTensorV2(),
-                                ])
-
-    def __call__(self, image):
-        return self.transform(image=image)
