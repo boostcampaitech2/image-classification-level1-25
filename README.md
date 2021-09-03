@@ -35,8 +35,8 @@ image-classification-level1-25/
 ### 명령어 샘플
 - train
 ```
-python train.py --name isgood --epoch 20 --model rexnet_200base --trainaug A_random_trans --criterion f1
-python cutmix_train.py --name LambdaLR_cutmix --wandb_unique_tag LambdaLR_cutmix --trainaug A_cutmix_trans2 --epoch 10 --batch_size 64 --mode ALL --val_ratio 0.1
+python train.py --name isgood --epoch 20 --model rexnet_200base --trainaug A_random_trans --criterion f1 --cutmix False
+python train.py --name LambdaLR_cutmix --wandb_unique_tag LambdaLR_cutmix --trainaug A_cutmix_trans2 --epoch 10 --batch_size 64 --mode ALL --val_ratio 0.1 --cutmix True
 ```
 - inference
 ```
