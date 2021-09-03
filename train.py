@@ -12,7 +12,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from torch.optim.lr_scheduler import StepLR
+from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from sklearn.model_selection import StratifiedKFold
@@ -125,7 +125,8 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
         lr=args.lr,
         weight_decay=5e-4
     )
-    scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+    scheduler = lr_scheduler.StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+    # scheduler = lr_scheduler.LambdaLR(optimizer, args.lr_decay_step)
 
     best_val_acc = 0
     best_val_loss = np.inf
@@ -220,20 +221,20 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
 
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
-                print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                stop_cnt = 0
+                # print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # stop_cnt = 0
                 best_val_loss = val_loss
                 
             if val_f1 > best_val_f1:
-                # print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
+                print(f"New best model for val F1 : {val_f1:.4}! saving the best model..")
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                # stop_cnt = 0
+                stop_cnt = 0
                 best_val_f1 = val_f1
 
                 
@@ -259,9 +260,9 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    # from dotenv import load_dotenv
+    from dotenv import load_dotenv
     import os
-    # load_dotenv(verbose=True)
+    load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
     parser.add_argument('--name', default='exp', help='model save at {SM_SAVE_DIR}/{name}')

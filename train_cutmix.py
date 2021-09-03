@@ -12,7 +12,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from torch.optim.lr_scheduler import StepLR
+from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from sklearn.model_selection import StratifiedKFold
@@ -89,6 +89,26 @@ def increment_path(path, exist_ok=False):
         return f"{path}{n}"
 
 
+def rand_bbox(size, lam): # size : [Batch_size, Channel, Width, Height]
+    W = size[2] 
+    H = size[3] 
+    cut_rat = np.sqrt(1. - lam)  # 패치 크기 비율
+    cut_w = np.int(W * cut_rat)
+    cut_h = np.int(H * cut_rat)  
+
+   	# 패치의 중앙 좌표 값 cx, cy
+    cx = np.random.randint(W)
+    cy = np.random.randint(H)
+		
+    # 패치 모서리 좌표 값 
+    bbx1 = 0
+    bby1 = np.clip(cy - cut_h // 2, 0, H)
+    bbx2 = W
+    bby2 = np.clip(cy + cut_h // 2, 0, H)
+   
+    return bbx1, bby1, bbx2, bby2
+
+
 def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
     # -- data_loader
     train_loader = DataLoader(
@@ -110,7 +130,6 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
     )
 
     device = torch.device("cuda" if use_cuda else "cpu")
-    print(device)
     # -- model
     model_module = getattr(import_module("models."+args.usermodel), args.model)  # default: rexnet_200base
     model = model_module(
@@ -126,7 +145,10 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
         lr=args.lr,
         weight_decay=5e-4
     )
-    scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+    scheduler = lr_scheduler.StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+    # Elambda = lambda epoch: 0.65 ** epoch
+    # scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda = Elambda)
+
 
     best_val_acc = 0
     best_val_loss = np.inf
@@ -153,25 +175,16 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
                 #cutmix
                 lam = np.random.beta(0.5, 0.5)
                 rand_index = torch.randperm(inputs.size()[0]).to(device)
-                target_a = labels
-                target_b = labels[rand_index]   
-        
-                W = inputs.size()[2]
-                H = inputs.size()[3]
-                cut_rat = np.sqrt(1-lam)
-                cut_h = np.int(H*cut_rat)
-                cy = np.random.randint(H)
-                bbx1 = 0
-                bby1 = np.clip(cy-cut_h//2,0,H)
-                bbx2 = W
-                bby2 = np.clip(cy+cut_h//2,0,H)
+                target_a = labels # 원본 이미지 label
+                target_b = labels[rand_index] # 패치 이미지 label 
 
+                bbx1, bby1, bbx2, bby2 = rand_bbox(inputs.size(), lam)
+       
                 inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
-                # adjust lambda to exactly match pixel ratio
                 lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
-                # compute output
                 outs = model(inputs)
-                loss = criterion(outs, target_a) * lam + criterion(outs, target_b) * (1. - lam)  
+                loss = criterion(outs, target_a) * lam + criterion(outs, target_b) * (1. - lam) # 패치 이미지와 원본 이미지의 비율에 맞게 loss를 계산을 해주는 부분
+
             else:
                 outs = model(inputs)
                 loss = criterion(outs, labels)
@@ -245,14 +258,14 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
 
             if val_acc > best_val_acc:
                 # print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 # stop_cnt = 0
                 best_val_acc = val_acc
                 
             if val_loss < best_val_loss:
-                #print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
-                torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
-                #stop_cnt = 0
+                # print(f"New best model for val loss : {val_loss:.4}! saving the best model..")
+                # torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
+                # stop_cnt = 0
                 best_val_loss = val_loss
                 
             if val_f1 > best_val_f1:
@@ -260,7 +273,7 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
                 torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_best.pth")
                 stop_cnt = 0
                 best_val_f1 = val_f1
-                
+    
             torch.save(model.state_dict(), f"{args.save_dir}/[{args.fold_idx}]_last.pth")
             print(
                 f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2}, f1: {val_f1:4.2} || "
@@ -275,15 +288,17 @@ def train(args, train_dataset, valid_dataset, train_transform, valid_transform):
             print(f'[earlystop: {stop_cnt}] No future. bye bye~~')
             break
         stop_cnt += 1
+    log_wandb('best', val_acc, best_val_f1, val_loss, False)
+    
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    # from dotenv import load_dotenv
+    from dotenv import load_dotenv
     import os
-    # load_dotenv(verbose=True)
+    load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
     parser.add_argument('--name', default='exp', help='model save at {SM_SAVE_DIR}/{name}')
