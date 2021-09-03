@@ -45,6 +45,7 @@ python inference.py --save_dir ./save/test1 --model rexnet_200base
 
 ### 성능
 - 단일모델 기준 `rexnet_200base_corss_4epoch_sota_0.7249`가 public leaderboard 기준 F1 0.7249를 기록하여 1위
+- 위 모델에 softmax TTA를 적용한 모델이 private 성능이 가장 잘나왔는데 예상치 못한 결과라 save를 따로 저장하지 못하였음
 - 자세한 정보는 `report` 및 `save/` 디렉토리 내의 `.log`나 `.config` 파일 참조
 
 ### Requirements
