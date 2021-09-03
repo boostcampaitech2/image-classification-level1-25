@@ -207,6 +207,7 @@ class A_random_trans2:
                                     Ap.ToTensorV2(),
                                 ])
 
+
 class A_cutmix_trans:
     def __init__(self, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), **args):
         self.mean = mean
@@ -287,6 +288,8 @@ class A_cutmix_trans3:
 
     def __call__(self, image):
         return self.transform(image=image)
+
+
 
 
 class A_simple_cutmix_trans:
