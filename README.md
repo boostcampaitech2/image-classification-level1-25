@@ -45,7 +45,7 @@ python inference.py --save_dir ./save/test1 --model rexnet_200base
 
 ### 성능
 - 단일모델 기준 `rexnet_200base_corss_4epoch_sota_0.7249`가 public leaderboard 기준 F1 0.7249를 기록하여 1위
-- 자세한 정보는 `report` 및 `save/` 디렉토리 내의 `log`나 `.config` 파일 참조
+- 자세한 정보는 `report` 및 `save/` 디렉토리 내의 `.log`나 `.config` 파일 참조
 
 ### Requirements
 - python, numpy, pandas
